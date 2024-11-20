@@ -1,0 +1,106 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><title>Chapter 4. Metaprogramming</title><meta name="generator" content="DocBook XSL Stylesheets V1.76.1"><meta name="keywords" content="assembly, assembler, asm, inline, 32-bit, IA-32, i386, x86, nasm, gas, as, as86, yasm, fasm, shasm, osimpa, OS, Linux, Unix, kernel, system, libc, glibc, system call, interrupt, small, fast, embedded, hardware, port, macroprocessor, metaprogramming, preprocessor"><link rel="home" href="Assembly-HOWTO.html" title="Linux Assembly HOWTO"><link rel="up" href="Assembly-HOWTO.html" title="Linux Assembly HOWTO"><link rel="prev" href="other.html" title="Other Assemblers"><link rel="next" href="meta.html" title="Metaprogramming"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">Chapter 4. Metaprogramming</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="other.html">Prev</a> </td><th width="60%" align="center"> </th><td width="20%" align="right"> <a accesskey="n" href="meta.html">Next</a></td></tr></table><hr></div><div class="chapter" title="Chapter 4. Metaprogramming"><div class="titlepage"><div><div><h2 class="title"><a name="s-meta"></a>Chapter 4. Metaprogramming</h2></div></div></div><div class="toc"><p><b>Table of Contents</b></p><dl><dt><span class="section"><a href="metaprogramming.html#idp323248">External filters</a></span></dt><dd><dl><dt><span class="section"><a href="metaprogramming.html#p-cpp">CPP</a></span></dt><dt><span class="section"><a href="metaprogramming.html#p-m4">M4</a></span></dt><dt><span class="section"><a href="metaprogramming.html#idp334464">Macroprocessing with your own filter</a></span></dt></dl></dd><dt><span class="section"><a href="meta.html">Metaprogramming</a></span></dt><dd><dl><dt><span class="section"><a href="meta.html#idp346032">Backends from compilers</a></span></dt><dt><span class="section"><a href="meta.html#idp347744">The New-Jersey Machine-Code Toolkit</a></span></dt><dt><span class="section"><a href="meta.html#idp349936">TUNES</a></span></dt></dl></dd></dl></div>
+
+
+
+<p>
+Assembly programming is a bore, but for critical parts of programs.
+</p>
+
+<p>
+You should use the appropriate tool for the right task, so don't choose
+assembly when it does not fit; C, OCaml, perl, Scheme, might be a better
+choice  in the most cases.
+</p>
+
+<p>
+However, there are cases when these tools do not give fine enough control on
+the machine, and assembly is useful or needed. In these cases you'll
+appreciate a system of macroprocessing and metaprogramming that allows
+recurring patterns to be factored each into one indefinitely reusable
+definition, which allows safer programming, automatic propagation of pattern
+modification, etc. Plain assembler often is not enough, even when one is doing
+only small routines to link with C.
+</p>
+
+<div class="section" title="External filters"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="idp323248"></a>External filters</h2></div></div></div>
+
+
+
+<p>
+Whatever is the macro support from your assembler, or whatever language you
+use (even C!), if the language is not expressive enough to you, you can have
+files passed through an external filter with a Makefile rule like that:
+</p>
+
+<p>
+</p><pre class="programlisting">
+%.s:    %.S other_dependencies
+        $(FILTER) $(FILTER_OPTIONS) &lt; $&lt; &gt; $@
+</pre><p>
+</p>
+
+<div class="section" title="CPP"><div class="titlepage"><div><div><h3 class="title"><a name="p-cpp"></a>CPP</h3></div></div></div>
+
+
+<p>
+CPP is truly not very expressive, but it's enough for easy things, it's
+standard, and called transparently by GCC.
+</p>
+
+<p>
+As an example of its limitations, you can't declare objects so that destructors
+are automatically called at the end of the declaring block; you don't have
+diversions or scoping, etc.
+</p>
+
+<p>
+CPP comes with any C compiler. However, considering how mediocre it is, stay
+away from it if by chance you can make it without C.
+</p>
+</div>
+
+<div class="section" title="M4"><div class="titlepage"><div><div><h3 class="title"><a name="p-m4"></a>M4</h3></div></div></div>
+
+
+<p>
+M4 gives you the full power of macroprocessing, with a Turing equivalent
+language, recursion, regular expressions, etc. You can do with it everything
+that CPP cannot.
+</p>
+
+<p>
+See
+<a class="ulink" href="ftp://ftp.forth.org/pub/Forth/Compilers/native/unix/this4th.tar.gz" target="_top">
+macro4th (this4th)</a> as an example of advanced macroprogramming using m4.
+</p>
+
+<p>
+However, its disfunctional quoting and unquoting semantics force you to use
+explicit continuation-passing tail-recursive macro style if you want to do
+<span class="emphasis"><em>advanced</em></span> macro programming (which is remindful of TeX
+-- BTW, has anyone tried to use TeX as a macroprocessor for anything else than
+typesetting ?). This is NOT worse than CPP that does not allow quoting and
+recursion anyway.
+</p>
+
+<p>
+The right version of M4 to get is <code class="literal">GNU m4</code> which has the most
+features and the least bugs or limitations of all. m4 is designed to be slow
+for anything but the simplest uses, which might still be ok for most assembly
+programming (you are not writing million-lines assembly programs, are you?).
+</p>
+</div>
+
+<div class="section" title="Macroprocessing with your own filter"><div class="titlepage"><div><div><h3 class="title"><a name="idp334464"></a>Macroprocessing with your own filter</h3></div></div></div>
+
+
+<p>
+You can write your own simple macro-expansion filter with the usual tools:
+perl, awk, sed, etc. It can be made rather quickly, and you control everything.
+But, of course, power in macroprocessing implies "the hard way".
+</p>
+</div>
+</div>
+
+
+</div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="other.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="meta.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">Other Assemblers </td><td width="20%" align="center"><a accesskey="h" href="Assembly-HOWTO.html">Home</a></td><td width="40%" align="right" valign="top"> Metaprogramming</td></tr></table></div></body></html>

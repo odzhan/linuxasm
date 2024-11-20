@@ -1,0 +1,35 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><title>Linux and assembly</title><meta name="generator" content="DocBook XSL Stylesheets V1.76.1"><meta name="keywords" content="assembly, assembler, asm, inline, 32-bit, IA-32, i386, x86, nasm, gas, as, as86, yasm, fasm, shasm, osimpa, OS, Linux, Unix, kernel, system, libc, glibc, system call, interrupt, small, fast, embedded, hardware, port, macroprocessor, metaprogramming, preprocessor"><link rel="home" href="Assembly-HOWTO.html" title="Linux Assembly HOWTO"><link rel="up" href="doyouneed.html" title="Chapter 2. Do you need assembly?"><link rel="prev" href="howtonot.html" title="How to NOT use Assembly"><link rel="next" href="assemblers.html" title="Chapter 3. Assemblers"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">Linux and assembly</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="howtonot.html">Prev</a> </td><th width="60%" align="center">Chapter 2. Do you need assembly?</th><td width="20%" align="right"> <a accesskey="n" href="assemblers.html">Next</a></td></tr></table><hr></div><div class="section" title="Linux and assembly"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="idp142256"></a>Linux and assembly</h2></div></div></div>
+
+
+
+<p>
+As you probably noticed, in general case you don't need to use assembly
+language in Linux programming. Unlike DOS, you do not have to write Linux
+drivers in assembly (well, actually you can do it if you really want). And
+with modern optimizing compilers, if you care of speed optimization for
+different CPU's, it's much simpler to write in C. However, if you're reading
+this, you might have some reason to use assembly instead of C/C++.
+</p>
+
+<p>
+You may <span class="emphasis"><em>need</em></span> to use assembly, or you may
+<span class="emphasis"><em>want</em></span> to use assembly. In short, main practical
+(<span class="emphasis"><em>need</em></span>) reasons of diving into the assembly realm are
+<span class="emphasis"><em>small code</em></span> and <span class="emphasis"><em><span class="application">libc</span>
+independence</em></span>. Impractical (<span class="emphasis"><em>want</em></span>), and the most
+often reason is being just an old crazy hacker, who has twenty years old habit
+of doing everything in assembly language.
+</p>
+
+<p>
+However, if you're porting Linux to some embedded hardware you can be quite
+short at the size of whole system: you need to fit kernel,
+<span class="application">libc</span> and all that stuff of
+<span class="application">(file|find|text|sh|etc.) utils</span> into several hundreds
+of kilobytes, and every kilobyte costs much. So, one of the possible ways is to
+rewrite some (or all) parts of system in assembly, and this will really save
+you a lot of space. For instance, a simple <span class="command"><strong>httpd</strong></span> written in
+assembly can take less than 600 bytes; you can fit a server consisting of
+kernel, httpd and ftpd in 400 KB or less... Think about it.
+</p>
+</div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="howtonot.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="doyouneed.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="assemblers.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">How to NOT use Assembly </td><td width="20%" align="center"><a accesskey="h" href="Assembly-HOWTO.html">Home</a></td><td width="40%" align="right" valign="top"> Chapter 3. Assemblers</td></tr></table></div></body></html>

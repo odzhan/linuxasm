@@ -1,0 +1,97 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><title>Hello, world!</title><meta name="generator" content="DocBook XSL Stylesheets V1.76.1"><meta name="keywords" content="assembly, assembler, asm, inline, 32-bit, IA-32, i386, x86, nasm, gas, as, as86, yasm, fasm, shasm, osimpa, OS, Linux, Unix, kernel, system, libc, glibc, system call, interrupt, small, fast, embedded, hardware, port, macroprocessor, metaprogramming, preprocessor"><link rel="home" href="Assembly-HOWTO.html" title="Linux Assembly HOWTO"><link rel="up" href="quickstart.html" title="Chapter 6. Quick start"><link rel="prev" href="quickstart.html" title="Chapter 6. Quick start"><link rel="next" href="build.html" title="Building an executable"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">Hello, world!</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="quickstart.html">Prev</a> </td><th width="60%" align="center">Chapter 6. Quick start</th><td width="20%" align="right"> <a accesskey="n" href="build.html">Next</a></td></tr></table><hr></div><div class="section" title="Hello, world!"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="idp472144"></a>Hello, world!</h2></div></div></div>
+
+
+
+<div class="section" title="Program layout"><div class="titlepage"><div><div><h3 class="title"><a name="idp475040"></a>Program layout</h3></div></div></div>
+
+
+<p>
+Linux is 32-bit, runs in protected mode, has flat memory model, and uses the
+ELF format for binaries.
+</p>
+
+<p>
+A program can be divided into sections: <code class="literal">.text</code> for your code
+(read-only), <code class="literal">.data</code> for your data (read-write),
+<code class="literal">.bss</code> for uninitialized data (read-write); there can actually
+be a few other standard sections, as well as some user-defined sections, but
+there's rare need to use them and they are out of our interest here. A program
+must have at least <code class="literal">.text</code> section.
+</p>
+
+<p>
+Now we will write our first program. Here is sample code:
+</p>
+</div>
+
+<div class="section" title="NASM (hello.asm)"><div class="titlepage"><div><div><h3 class="title"><a name="idp479584"></a>NASM (hello.asm)</h3></div></div></div>
+
+
+<p>
+</p><pre class="programlisting">
+section .text                   ;section declaration
+
+                                ;we must export the entry point to the ELF linker or
+    global  _start              ;loader. They conventionally recognize _start as their
+			                          ;entry point. Use ld -e foo to override the default.
+
+_start:
+
+                                ;write our string to stdout
+
+    mov     edx,len             ;third argument: message length
+    mov     ecx,msg             ;second argument: pointer to message to write
+    mov     ebx,1               ;first argument: file handle (stdout)
+    mov     eax,4               ;system call number (sys_write)
+    int     0x80                ;call kernel
+
+                                ;and exit
+
+  	mov     ebx,0               ;first syscall argument: exit code
+    mov     eax,1               ;system call number (sys_exit)
+    int     0x80                ;call kernel
+
+section .data                   ;section declaration
+
+msg db      "Hello, world!",0xa ;our dear string
+len equ     $ - msg             ;length of our dear string
+</pre><p>
+</p>
+</div>
+
+<div class="section" title="GAS (hello.S)"><div class="titlepage"><div><div><h3 class="title"><a name="idp482592"></a>GAS (hello.S)</h3></div></div></div>
+
+
+<p>
+</p><pre class="programlisting">
+.text                           # section declaration
+
+			                          # we must export the entry point to the ELF linker or
+    .global _start              # loader. They conventionally recognize _start as their
+			                          # entry point. Use ld -e foo to override the default.
+
+_start:
+
+                                # write our string to stdout
+
+	  movl    $len,%edx           # third argument: message length
+	  movl    $msg,%ecx           # second argument: pointer to message to write
+	  movl    $1,%ebx             # first argument: file handle (stdout)
+	  movl    $4,%eax             # system call number (sys_write)
+	  int     $0x80               # call kernel
+
+                                # and exit
+
+	  movl    $0,%ebx             # first argument: exit code
+	  movl    $1,%eax             # system call number (sys_exit)
+	  int     $0x80               # call kernel
+
+.data                           # section declaration
+
+msg:
+	.ascii    "Hello, world!\n"   # our dear string
+	len = . - msg                 # length of our dear string
+</pre><p>
+</p>
+</div>
+</div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="quickstart.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="quickstart.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="build.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">Chapter 6. Quick start </td><td width="20%" align="center"><a accesskey="h" href="Assembly-HOWTO.html">Home</a></td><td width="40%" align="right" valign="top"> Building an executable</td></tr></table></div></body></html>

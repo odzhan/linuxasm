@@ -1,0 +1,231 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><title>Chapter 3. Assemblers</title><meta name="generator" content="DocBook XSL Stylesheets V1.76.1"><meta name="keywords" content="assembly, assembler, asm, inline, 32-bit, IA-32, i386, x86, nasm, gas, as, as86, yasm, fasm, shasm, osimpa, OS, Linux, Unix, kernel, system, libc, glibc, system call, interrupt, small, fast, embedded, hardware, port, macroprocessor, metaprogramming, preprocessor"><link rel="home" href="Assembly-HOWTO.html" title="Linux Assembly HOWTO"><link rel="up" href="Assembly-HOWTO.html" title="Linux Assembly HOWTO"><link rel="prev" href="landa.html" title="Linux and assembly"><link rel="next" href="gas.html" title="GAS"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">Chapter 3. Assemblers</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="landa.html">Prev</a> </td><th width="60%" align="center"> </th><td width="20%" align="right"> <a accesskey="n" href="gas.html">Next</a></td></tr></table><hr></div><div class="chapter" title="Chapter 3. Assemblers"><div class="titlepage"><div><div><h2 class="title"><a name="s-assem"></a>Chapter 3. Assemblers</h2></div></div></div><div class="toc"><p><b>Table of Contents</b></p><dl><dt><span class="section"><a href="assemblers.html#p-gcc">GCC Inline Assembly</a></span></dt><dd><dl><dt><span class="section"><a href="assemblers.html#idp154672">Where to find GCC</a></span></dt><dt><span class="section"><a href="assemblers.html#idp161568">Where to find docs for GCC Inline Asm</a></span></dt><dt><span class="section"><a href="assemblers.html#idp174864">Invoking GCC to build proper inline assembly code</a></span></dt><dt><span class="section"><a href="assemblers.html#idp175184">Macro support</a></span></dt></dl></dd><dt><span class="section"><a href="gas.html">GAS</a></span></dt><dd><dl><dt><span class="section"><a href="gas.html#idp198432">Where to find it</a></span></dt><dt><span class="section"><a href="gas.html#idp202464">What is this AT&amp;T syntax</a></span></dt><dt><span class="section"><a href="gas.html#idp232288">Intel syntax</a></span></dt><dt><span class="section"><a href="gas.html#idp235024">16-bit mode</a></span></dt><dt><span class="section"><a href="gas.html#idp238880">Macro support</a></span></dt></dl></dd><dt><span class="section"><a href="nasm.html">NASM</a></span></dt><dd><dl><dt><span class="section"><a href="nasm.html#p-nasm-where">Where to find NASM</a></span></dt><dt><span class="section"><a href="nasm.html#idp251072">What it does</a></span></dt></dl></dd><dt><span class="section"><a href="other.html">Other Assemblers</a></span></dt><dd><dl><dt><span class="section"><a href="other.html#idp264000">AS86</a></span></dt><dt><span class="section"><a href="other.html#idp273920">YASM</a></span></dt><dt><span class="section"><a href="other.html#idp275680">FASM</a></span></dt><dt><span class="section"><a href="other.html#idp278064">OSIMPA (SHASM)</a></span></dt><dt><span class="section"><a href="other.html#idp281344">AASM</a></span></dt><dt><span class="section"><a href="other.html#idp285728">TDASM</a></span></dt><dt><span class="section"><a href="other.html#idp288960">HLA</a></span></dt><dt><span class="section"><a href="other.html#idp293712">TALC</a></span></dt><dt><span class="section"><a href="other.html#idp298320">Free Pascal</a></span></dt><dt><span class="section"><a href="other.html#idp307328">Win32Forth assembler</a></span></dt><dt><span class="section"><a href="other.html#idp310896">Terse</a></span></dt><dt><span class="section"><a href="other.html#idp316544">Non-free and/or Non-32bit x86 assemblers</a></span></dt></dl></dd></dl></div>
+
+
+
+<div class="section" title="GCC Inline Assembly"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="p-gcc"></a>GCC Inline Assembly</h2></div></div></div>
+
+
+
+<p>
+The well-known GNU C/C++ Compiler (GCC), an optimizing 32-bit compiler at the
+heart of the GNU project, supports the x86 architecture quite well, and
+includes the ability to insert assembly code in C programs, in such a way that
+register allocation can be either specified or left to GCC. GCC works on most
+available platforms, notably Linux, *BSD, VSTa, OS/2, *DOS, Win*, etc.
+</p>
+
+<div class="section" title="Where to find GCC"><div class="titlepage"><div><div><h3 class="title"><a name="idp154672"></a>Where to find GCC</h3></div></div></div>
+
+<p>
+GCC home page is <a class="ulink" href="http://gcc.gnu.org" target="_top">http://gcc.gnu.org</a>.
+</p>
+
+<p>
+<a name="p-djgpp"></a>
+DOS port of GCC is called
+<a class="ulink" href="http://www.delorie.com/djgpp/" target="_top">DJGPP</a>.
+</p>
+
+<p>
+There are two Win32 GCC ports:
+<a class="ulink" href="http://www.cygwin.com" target="_top">cygwin</a> and
+<a class="ulink" href="http://www.mingw.org" target="_top">mingw</a> 
+</p>
+
+<p>
+There is also an OS/2 port of GCC called EMX;
+it works under DOS too,
+and includes lots of unix-emulation library routines.
+Look around the following site:
+<a class="ulink" href="ftp://ftp.leo.org/pub/comp/os/os2/leo/gnu/emx+gcc/" target="_top">
+ftp://ftp.leo.org/pub/comp/os/os2/leo/gnu/emx+gcc/</a>.
+</p>
+</div>
+
+<div class="section" title="Where to find docs for GCC Inline Asm"><div class="titlepage"><div><div><h3 class="title"><a name="idp161568"></a>Where to find docs for GCC Inline Asm</h3></div></div></div>
+
+
+<p>
+The documentation of GCC includes documentation files in TeXinfo format.
+You can compile them with TeX and print then result,
+or convert them to <code class="filename">.info</code>, and browse them with emacs,
+or convert them to <code class="filename">.html</code>, or nearly whatever you like;
+convert (with the right tools) to whatever you like,
+or just read as is. The <code class="filename">.info</code> files
+are generally found on any good installation for GCC.
+</p>
+
+<p>
+The right section to look for is <code class="literal">C Extensions::Extended Asm::</code>
+</p>
+
+<p>
+Section	<code class="literal">Invoking GCC::Submodel Options::i386 Options::</code> might
+help too. Particularly, it gives the i386 specific constraint names for
+registers: 
+<code class="literal">abcdSDB</code> correspond to
+<code class="literal">%eax</code>,
+<code class="literal">%ebx</code>,
+<code class="literal">%ecx</code>,
+<code class="literal">%edx</code>,
+<code class="literal">%esi</code>,
+<code class="literal">%edi</code>
+and
+<code class="literal">%ebp</code>
+respectively (no letter for <code class="literal">%esp</code>).
+</p>
+
+<p>
+The DJGPP Games resource (not only for game hackers) had page specifically
+about assembly, but it's down. Its data have nonetheless been recovered on the
+<a class="link" href="assemblers.html#p-djgpp">DJGPP site</a>, that contains a mine of other
+useful information:
+<a class="ulink" href="http://www.delorie.com/djgpp/doc/brennan/" target="_top">
+http://www.delorie.com/djgpp/doc/brennan/</a>.
+</p>
+
+<p>
+GCC depends on GAS for assembling and follows its syntax (see below);
+do mind that inline asm needs percent characters to be quoted,
+they will be passed to GAS.
+See the section about GAS below.
+</p>
+
+<p>
+Find <span class="emphasis"><em>lots</em></span> of useful examples in the
+<code class="filename">linux/include/asm-i386/</code>
+subdirectory of the sources for the Linux kernel.
+</p>
+</div>
+
+<div class="section" title="Invoking GCC to build proper inline assembly code"><div class="titlepage"><div><div><h3 class="title"><a name="idp174864"></a>Invoking GCC to build proper inline assembly code</h3></div></div></div>
+
+<p>
+Because assembly routines from the kernel headers (and most likely your own
+headers, if you try making your assembly programming as clean as it is in the
+linux kernel) are embedded in <code class="function">extern inline</code> functions,
+GCC must be invoked with the <code class="option">-O</code> flag (or <code class="option">-O2</code>,
+<code class="option">-O3</code>, etc), for these routines to be available. If not, your
+code may compile, but not link properly, since it will be looking for
+non-inlined <code class="function">extern</code> functions in the libraries against
+which your program is being linked! Another way is to link against libraries
+that include fallback versions of the routines.
+</p>
+
+<p>
+Inline assembly can be disabled with <code class="option">-fno-asm</code>, which will have
+the compiler die when using extended inline asm syntax, or else generate calls
+to an external function named <code class="function">asm()</code> that the linker can't
+resolve. To counter such flag, <code class="option">-fasm</code> restores treatment of the
+<code class="literal">asm</code> keyword.
+</p>
+
+<p>
+More generally, good compile flags for GCC on the x86 platform are
+</p>
+
+<p>
+<span class="command"><strong>gcc -O2 -fomit-frame-pointer -W -Wall</strong></span>
+</p>
+
+<p>
+<code class="option">-O2</code> is the good optimization level in most cases. Optimizing
+besides it takes more time, and yields code that is much larger, but only a bit
+faster; such over-optimization might be useful for tight loops only (if any),
+which you may be doing in assembly anyway. In cases when you need really strong
+compiler optimization for a few files, do consider using up to
+<code class="option">-O6</code>.
+</p>
+
+<p>
+<code class="option">-fomit-frame-pointer</code> allows generated code to skip the stupid
+frame pointer maintenance, which makes code smaller and faster, and frees a
+register for further optimizations. It precludes the easy use of debugging tools
+(<span class="command"><strong>gdb</strong></span>), but when you use these, you just don't care about size
+and speed anymore anyway.
+</p>
+
+<p>
+<code class="option">-W -Wall</code> enables all useful warnings and helps you to catch
+obvious stupid errors.
+</p>
+
+<p>
+You can add some CPU-specific <code class="option">-m486</code> or such flag so that GCC
+will produce code that is more adapted to your precise CPU. Note that modern
+GCC has <code class="option">-mpentium</code> and such flags (and
+<a class="ulink" href="http://goof.com/pcg/" target="_top">PGCC</a> has even more), whereas
+GCC 2.7.x and older versions do not. A good choice of CPU-specific flags should
+be in the Linux kernel. Check the TeXinfo documentation of your current GCC
+installation for more.
+</p>
+
+<p>
+<code class="option">-m386</code> will help optimize for size, hence also for speed on
+computers whose memory is tight and/or loaded, since big programs cause swap,
+which more than counters any "optimization" intended by the larger code. In
+such settings, it might be useful to stop using C, and use instead a language
+that favors code factorization, such as a functional language and/or FORTH,
+and use a bytecode- or wordcode- based implementation.
+</p>
+
+<p>
+Note that you can vary code generation flags from file to file, so
+performance-critical files will use maximum optimization, whereas other files
+will be optimized for size.
+</p>
+
+<p>
+To optimize even more, option <code class="option">-mregparm=2</code> and/or corresponding
+function attribute might help, but might pose lots of problems when linking to
+foreign code, <span class="emphasis"><em>including <span class="application">libc</span></em></span>.
+There are ways to correctly declare foreign functions so the right call
+sequences be generated, or you might want to recompile the foreign libraries
+to use the same register-based calling convention...
+</p>
+
+<p>
+Note that you can add make these flags the default by editing file
+<code class="filename">/usr/lib/gcc-lib/i486-linux/2.7.2.3/specs</code> or wherever that
+is on your system (better not add <code class="option">-W -Wall</code> there, though). The
+exact location of the GCC specs files on system can be found by
+<span class="command"><strong>gcc -v</strong></span>.
+</p>
+
+</div>
+
+<div class="section" title="Macro support"><div class="titlepage"><div><div><h3 class="title"><a name="idp175184"></a>Macro support</h3></div></div></div>
+
+
+<p>
+GCC allows (and requires) you to specify register constraints in your inline
+assembly code, so the optimizer always know about it; thus, inline assembly
+code is really made of patterns, not forcibly exact code.
+</p>
+
+<p>
+Thus, you can put your assembly into CPP macros, and inline C functions, so
+anyone can use it in as any C function/macro. Inline functions resemble macros
+very much, but are sometimes cleaner to use. Beware that in all those cases,
+code will be duplicated, so only local labels (of <code class="literal">1:</code> style)
+should be defined in that asm code. However, a macro would allow the name for
+a non local defined label to be passed as a parameter (or else, you should use
+additional meta-programming methods). Also, note that propagating inline asm
+code will spread potential bugs in them; so watch out doubly for register
+constraints in such inline asm code.
+</p>
+
+<p>
+Lastly, the C language itself may be considered as a good abstraction to
+assembly programming, which relieves you from most of the trouble of assembling.
+</p>
+</div>
+</div>
+
+
+
+
+
+
+
+</div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="landa.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="gas.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">Linux and assembly </td><td width="20%" align="center"><a accesskey="h" href="Assembly-HOWTO.html">Home</a></td><td width="40%" align="right" valign="top"> GAS</td></tr></table></div></body></html>

@@ -1,0 +1,376 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><title>Hello, world!</title><meta name="generator" content="DocBook XSL Stylesheets V1.76.1"><link rel="home" href="Assembly-Intro.html" title="Introduction to UNIX assembly programming"><link rel="up" href="Assembly-Intro.html" title="Introduction to UNIX assembly programming"><link rel="prev" href="Assembly-Intro.html" title="Introduction to UNIX assembly programming"><link rel="next" href="references.html" title="References"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">Hello, world!</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="Assembly-Intro.html">Prev</a> </td><th width="60%" align="center"> </th><td width="20%" align="right"> <a accesskey="n" href="references.html">Next</a></td></tr></table><hr></div><div class="sect1" title="Hello, world!"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="hello"></a>Hello, world!</h2></div></div></div>
+
+
+
+<p>
+Now we will write our program, the old classic "Hello, world"
+(<code class="filename">hello.asm</code>).
+You can download its source and binaries
+<a class="ulink" href="http://asm.sourceforge.net/intro/hello.tgz" target="_top">here</a>
+But before you do, let me explain several basics.
+</p>
+
+<div class="sect2" title="System calls"><div class="titlepage"><div><div><h3 class="title"><a name="idp51184"></a>System calls</h3></div></div></div>
+<p>
+Unless a program is just implementing some math algorithms in assembly,
+it will deal with such things as getting input, producing output,
+and exiting. For this, it will need to call on OS services.
+In fact, programming in assembly language is quite the same in different OSes,
+unless OS services are touched.
+</p>
+
+<p>
+There are two common ways of performing a system call in UNIX OS:
+through the C library (<span class="application">libc</span>) wrapper, or directly.
+</p>
+
+<p>
+Using or not using <span class="application">libc</span> in assembly programming
+is more a question of taste/belief than something practical.
+<span class="application">Libc</span> wrappers are made to protect programs
+from possible system call convention changes,
+and to provide POSIX compatible interface if the kernel lacks it for some call.
+However, the UNIX kernel is usually more-or-less POSIX compliant --
+this means that the syntax of most <span class="application">libc</span> "system calls"
+exactly matches the syntax of real kernel system calls (and vice versa).
+But the main drawback of throwing <span class="application">libc</span> away
+is that one loses several functions that are not just syscall wrappers,
+like <code class="function">printf()</code>, <code class="function">malloc()</code> and similar.
+</p>
+
+<p>
+This tutorial will show how to use <span class="emphasis"><em>direct</em></span> kernel calls,
+since this is the fastest way to call kernel service;
+our code is not linked to any library, does not use ELF interpreter,
+it communicates with kernel directly.
+</p>
+
+<p>
+Things that differ in different UNIX kernels
+are set of system calls and system call convention
+(however as they strive for POSIX compliance,
+there's a lot of common between them).
+</p>
+
+<div class="note" title="Note" style="margin-left: 0.5in; margin-right: 0.5in;"><h3 class="title">Note</h3>
+<p>
+(Former) DOS programmers might be wondering,
+"What is a system call?"
+If you ever wrote a DOS assembly program
+(and most IA-32 assembly programmers did), you may remember DOS services
+<code class="function">int 0x21</code>,
+<code class="function">int 0x25</code>,
+<code class="function">int 0x26</code> etc..
+These are analogous to the UNIX system call.
+However, the actual implementation is absolutely different,
+and system calls are not necessarily done via some interrupt.
+Also, quite often DOS programmers mix OS services with BIOS services
+like <code class="function">int 0x10</code> or <code class="function">int 0x16</code>
+and are very surprised when they fail
+to perform them in UNIX, since these are not OS services).
+</p>
+</div>
+</div>
+
+<div class="sect2" title="Program layout"><div class="titlepage"><div><div><h3 class="title"><a name="idp22960"></a>Program layout</h3></div></div></div>
+<p>
+As a rule, modern IA-32 UNIXes are 32bit (*grin*), run in protected mode,
+have a flat memory model, and use the ELF format for binaries.
+</p>
+
+<p>
+A program can be divided into sections:
+<code class="literal">.text</code> for your code (read-only),
+<code class="literal">.data</code> for your data (read-write),
+<code class="literal">.bss</code> for uninitialized data (read-write);
+there can actually be a few other standard sections,
+as well as some user-defined sections,
+but there's rare need to use them and they are out of our interest here.
+A program must have at least <code class="literal">.text</code> section.
+</p>
+
+<p>
+Ok, now we'll dive into OS specific details.
+</p>
+</div>
+
+<div class="sect2" title="Linux"><div class="titlepage"><div><div><h3 class="title"><a name="idp62000"></a>Linux</h3></div></div></div>
+<p>
+System calls in Linux are done through int 0x80.
+(actually there's a kernel patch allowing system calls to be done
+via the <code class="function">syscall</code> (<code class="function">sysenter</code>)
+instruction on newer CPUs, but this thing is still experimental).
+</p>
+
+<p>
+Linux differs from the usual UNIX calling convention,
+and features a "fastcall" convention for system calls (it resembles DOS).
+The system function number is passed in <code class="literal">eax</code>,
+and arguments are passed through registers, not the stack.
+There can be up to six arguments in
+<code class="literal">ebx</code>,
+<code class="literal">ecx</code>,
+<code class="literal">edx</code>,
+<code class="literal">esi</code>,
+<code class="literal">edi</code>,
+<code class="literal">ebp</code> consequently.
+If there are more arguments, they are simply passed though the
+structure as first argument.
+The result is returned in <code class="literal">eax</code>,
+and the stack is not touched at all.
+</p>
+
+<p>
+System call function numbers are in <code class="filename">sys/syscall.h</code>,
+but actually in <code class="filename">asm/unistd.h</code>.
+Documentation on the actual system calls is in section 2 of the manual pages
+some documentation is in the 2nd section of manual
+(for example to find info on <code class="function">write</code> system call,
+issue the command <span class="command"><strong>man 2 write</strong></span>).
+</p>
+
+<p>
+There have been several attempts to write
+an up-to-date documentation of the Linux system calls,
+examine URLs in the
+<a class="xref" href="references.html" title="References">References</a> section below.
+</p>
+
+<p>
+So, our Linux program will look like:
+</p>
+
+<p>
+</p><pre class="programlisting">
+section     .text
+global      _start                              ;must be declared for linker (ld)
+
+_start:                                         ;tell linker entry point
+
+    mov     edx,len                             ;message length
+    mov     ecx,msg                             ;message to write
+    mov     ebx,1                               ;file descriptor (stdout)
+    mov     eax,4                               ;system call number (sys_write)
+    int     0x80                                ;call kernel
+
+    mov     eax,1                               ;system call number (sys_exit)
+    int     0x80                                ;call kernel
+
+section     .data
+
+msg     db  'Hello, world!',0xa                 ;our dear string
+len     equ $ - msg                             ;length of our dear string
+</pre><p>
+</p>
+
+<p>
+Kernel source references:
+</p><div class="itemizedlist"><ul class="itemizedlist" type="disc"><li class="listitem">
+<p>
+<a class="ulink" href="file:///usr/src/linux/arch/i386/kernel/entry.S" target="_top">
+<code class="filename">arch/i386/kernel/entry.S</code>
+</a>
+</p>
+</li><li class="listitem">
+<p>
+<a class="ulink" href="file:///usr/src/linux/include/asm-i386/unistd.h" target="_top">
+<code class="filename">include/asm-i386/unistd.h</code>
+</a>
+</p>
+</li><li class="listitem">
+<p>
+<a class="ulink" href="file:///usr/src/linux/include/linux/sys.h" target="_top">
+<code class="filename">include/linux/sys.h</code>
+</a>
+</p>
+</li></ul></div><p>
+</p>
+</div>
+
+<div class="sect2" title="FreeBSD"><div class="titlepage"><div><div><h3 class="title"><a name="idp79120"></a>FreeBSD</h3></div></div></div>
+<div class="note" title="Note" style="margin-left: 0.5in; margin-right: 0.5in;"><h3 class="title">Note</h3>
+<p>
+most of this section should apply to other BSD systems (OpenBSD, NetBSD) as well,
+however the source references may be different.
+</p>
+</div>
+
+<p>
+FreeBSD has the more "usual" calling convention,
+where the syscall number is in eax, and the parameters are on the stack
+(the first argument is pushed last).
+A system call should be done performed through a <span class="emphasis"><em>function call</em></span>
+to a function containing
+<code class="function">int 0x80</code> and <code class="function">ret</code>,
+not just <code class="function">int 0x80</code> itself
+(kernel expects to find extra 4 bytes on the stack
+before <code class="function">int 0x80</code> is issued).
+The caller must clean up the stack after the call is complete.
+The result is returned as usual in <code class="literal">eax</code>.
+</p>
+
+<p>
+There's an alternate way of using <code class="function">call 7:0</code> gate
+instead of <code class="function">int 0x80</code>.
+The end-result is the same, but the <code class="function">call 7:0</code>
+method will increase the program size
+since you will also need to do an extra <code class="function">push eax</code> before,
+and these two instructions occupy more bytes.
+</p>
+
+<p>
+System call function numbers are listed in <code class="filename">sys/syscall.h</code>,
+and the documentation on the system calls is in section 2 of the man pages.
+</p>
+
+<p>
+Ok, I think the source will explain this better:
+</p>
+
+<p>
+</p><pre class="programlisting">
+section     .text
+global      _start                              ;must be declared for linker (ld)
+
+_syscall:
+    int     0x80                                ;system call
+	  ret
+
+_start:                                         ;tell linker entry point
+
+	  push    dword len                           ;message length
+	  push    dword msg                           ;message to write
+	  push    dword 1                             ;file descriptor (stdout)
+	  mov     eax,0x4                             ;system call number (sys_write)
+	  call    _syscall                            ;call kernel
+
+		;the alternate way to call kernel:
+		;push   eax
+    ;call   7:0
+
+	  add     esp,12                              ;clean stack (3 arguments * 4)
+
+	  push    dword 0                             ;exit code
+	  mov     eax,0x1                             ;system call number (sys_exit)
+	  call    _syscall                            ;call kernel
+
+		;we do not return from sys_exit,
+		;there's no need to clean stack
+section     .data
+
+msg     db  "Hello, world!",0xa                 ;our dear string
+len     equ $ - msg                             ;length of our dear string
+</pre><p>
+</p>
+
+<p>
+Kernel source references:
+</p><div class="itemizedlist"><ul class="itemizedlist" type="disc"><li class="listitem"><p>
+<a class="ulink" href="file:///usr/src/sys/i386/i386/exception.s" target="_top">
+<code class="filename">i386/i386/exception.s</code>
+</a>
+</p>
+</li><li class="listitem">
+<p>
+<a class="ulink" href="file:///usr/src/sys/i386/i386/trap.c" target="_top">
+<code class="filename">i386/i386/trap.c</code>
+</a>
+</p>
+</li><li class="listitem">
+<p>
+<a class="ulink" href="file:///usr/src/sys/sys/syscall.h" target="_top">
+<code class="filename">sys/syscall.h</code>
+</a>
+</p></li></ul></div><p>
+</p>
+</div>
+
+<div class="sect2" title="BeOS"><div class="titlepage"><div><div><h3 class="title"><a name="idp94768"></a>BeOS</h3></div></div></div>
+<div class="note" title="Note" style="margin-left: 0.5in; margin-right: 0.5in;"><h3 class="title">Note</h3>
+<p>
+if you are building <span class="application">nasm</span> version 0.98
+from the source on BeOS,
+you need to insert <code class="literal">#include "nasm.h"</code>
+into <code class="filename">float.h</code>,
+and <code class="literal">#include &lt;stdio.h&gt;</code>
+into <code class="filename">nasm.h</code>.
+</p>
+</div>
+
+<p>
+The BeOS kernel also uses the "usual" UNIX calling convention.
+The difference from the FreeBSD example is that you call
+<code class="function">int 0x25</code>.
+</p>
+
+<p>
+For information where to find system call function numbers and other
+interesting details, examine
+<a class="link" href="references.html" title="References">asmutils</a>,
+especially the <code class="filename">os_beos.inc</code> file.
+</p>
+
+<p>
+</p><pre class="programlisting">
+section     .text
+global      _start                              ;must be declared for linker (ld)
+
+_syscall:                                       ;system call
+    int     0x25
+	  ret
+
+_start:                                         ;tell linker entry point
+
+	  push    dword len                           ;message length
+	  push    dword msg                           ;message to write
+  	push    dword 1                             ;file descriptor (stdout)
+	  mov     eax,0x3                             ;system call number (sys_write)
+	  call    _syscall                            ;call kernel
+	  add     esp,12                              ;clean stack (3 * 4)
+
+	  push    dword 0                             ;exit code
+	  mov     eax,0x3f                            ;system call number (sys_exit)
+	  call    _syscall                            ;call kernel
+				                                        ;no need to clean stack
+section     .data
+
+msg     db  "Hello, world!",0xa                 ;our dear string
+len     equ $ - msg                             ;length of our dear string
+</pre><p>
+</p>
+</div>
+
+<div class="sect2" title="Building an executable"><div class="titlepage"><div><div><h3 class="title"><a name="idp102432"></a>Building an executable</h3></div></div></div>
+<p>
+Building an executable is the usual two-step process of compiling and then linking.
+To make an executable out of our <code class="filename">hello.asm</code> we must do the following:
+</p>
+
+<p>
+</p><pre class="screen">
+$ nasm -f elf hello.asm                         # this will produce hello.o ELF object file
+$ ld -s -o hello hello.o                        # this will produce hello executable
+</pre><p>
+</p>
+
+<div class="note" title="Note" style="margin-left: 0.5in; margin-right: 0.5in;"><h3 class="title">Note</h3>
+<p>
+OpenBSD and NetBSD users should issue the following sequence instead
+(because of <code class="literal">a.out</code> executable format):
+</p>
+
+<p>
+</p><pre class="screen">
+$ nasm -f aoutb hello.asm                       # this will produce hello.o a.out object file
+$ ld -e _start -o hello hello.o                 # this will produce hello executable
+</pre><p>
+</p>
+</div>
+
+<p>
+That's it. Simple.
+Now you can launch the hello program by entering <span class="command"><strong>./hello</strong></span>.
+Look at the binary size -- surprised?
+</p>
+</div>
+</div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="Assembly-Intro.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="references.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">Introduction to UNIX assembly programming </td><td width="20%" align="center"><a accesskey="h" href="Assembly-Intro.html">Home</a></td><td width="40%" align="right" valign="top"> References</td></tr></table></div></body></html>

@@ -1,0 +1,72 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><title>Linux Assembly HOWTO</title><meta name="generator" content="DocBook XSL Stylesheets V1.76.1"><meta name="description" content="This is the Linux Assembly HOWTO, version 0.7 This document describes how to program in assembly language using free programming tools, focusing on development for or from the Linux Operating System, mostly on IA-32 (i386) platform. Included material may or may not be applicable to other hardware and/or software platforms."><meta name="keywords" content="assembly, assembler, asm, inline, 32-bit, IA-32, i386, x86, nasm, gas, as, as86, yasm, fasm, shasm, osimpa, OS, Linux, Unix, kernel, system, libc, glibc, system call, interrupt, small, fast, embedded, hardware, port, macroprocessor, metaprogramming, preprocessor"><link rel="home" href="Assembly-HOWTO.html" title="Linux Assembly HOWTO"><link rel="next" href="introduction.html" title="Chapter 1. Introduction"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">Linux Assembly HOWTO</th></tr><tr><td width="20%" align="left"> </td><th width="60%" align="center"> </th><td width="20%" align="right"> <a accesskey="n" href="introduction.html">Next</a></td></tr></table><hr></div><div class="book" title="Linux Assembly HOWTO"><div class="titlepage"><div><div><h1 class="title"><a name="idp768"></a>Linux Assembly HOWTO</h1></div><div><div class="authorgroup">
+<div class="author"><h3 class="author"><span class="firstname">Leo</span> <span class="surname">Noordergraaf</span></h3><div class="affiliation">
+<span class="orgname">
+<a class="ulink" href="http://asm.sourceforge.net" target="_top">Linux Assembly</a>
+<br></span>
+<div class="address"><p><br>
+<code class="email">&lt;<a class="email" href="mailto:lnoor@users.sourceforge.net">lnoor@users.sourceforge.net</a>&gt;</code><br>
+</p></div>
+</div></div>
+
+<div class="author"><h3 class="author"><span class="firstname">Konstantin</span> <span class="surname">Boldyshev</span></h3><div class="affiliation">
+<span class="orgname">
+<a class="ulink" href="http://asm.sourceforge.net" target="_top">Linux Assembly</a>
+<br></span>
+<div class="address"><p><br>
+<code class="email">&lt;<a class="email" href="mailto:konst@users.sourceforge.net">konst@users.sourceforge.net</a>&gt;</code><br>
+</p></div>
+</div></div>
+
+<div class="author"><h3 class="author"><span class="firstname">Francois-Rene</span> <span class="surname">Rideau</span></h3><div class="affiliation">
+<span class="orgname">
+<a class="ulink" href="http://tunes.org" target="_top">Tunes project</a>
+<br></span>
+<div class="address"><p><br>
+<code class="email">&lt;<a class="email" href="mailto:fare@tunes.org">fare@tunes.org</a>&gt;</code><br>
+</p></div>
+</div></div>
+</div></div><div><p class="releaseinfo">Version 0.7</p></div><div><p class="copyright">Copyright © 2013 Leo Noordergraaf</p></div><div><p class="copyright">Copyright © 1999-2006 Konstantin Boldyshev</p></div><div><p class="copyright">Copyright © 1996-1999 Francois-Rene Rideau</p></div><div><div class="legalnotice" title="Legal Notice"><a name="idp23168"></a>
+<p>
+Permission is granted to copy, distribute and/or modify this document under
+the terms of the GNU Free Documentation License, Version 1.1; with no
+Invariant Sections, with no Front-Cover Texts, and no Back-Cover texts.
+</p>
+</div></div><div><p class="pubdate">$Date: 2013-03-03 16:47:09 +0100 (Sun, 03 Mar 2013) $</p></div><div><div class="abstract" title="Abstract"><p class="title"><b>Abstract</b></p>
+<p>
+This is the Linux Assembly HOWTO, version 0.7
+This document describes how to program in assembly language using
+<span class="emphasis"><em>free</em></span> programming tools, focusing on development for or
+from the Linux Operating System, mostly on IA-32 (i386) platform. Included
+material may or may not be applicable to other hardware and/or software
+platforms.
+</p>
+</div></div></div><hr></div><div class="toc"><p><b>Table of Contents</b></p><dl><dt><span class="chapter"><a href="introduction.html">1. Introduction</a></span></dt><dt><span class="chapter"><a href="doyouneed.html">2. Do you need assembly?</a></span></dt><dd><dl><dt><span class="section"><a href="doyouneed.html#idp80496">Pros and Cons</a></span></dt><dd><dl><dt><span class="section"><a href="doyouneed.html#idp83536">The advantages of Assembly</a></span></dt><dt><span class="section"><a href="doyouneed.html#idp94864">The disadvantages of Assembly</a></span></dt><dt><span class="section"><a href="doyouneed.html#idp110032">Assessment</a></span></dt></dl></dd><dt><span class="section"><a href="howtonot.html">How to NOT use Assembly</a></span></dt><dd><dl><dt><span class="section"><a href="howtonot.html#idp120080">General procedure to achieve efficient code</a></span></dt><dt><span class="section"><a href="howtonot.html#idp123568">Languages with optimizing compilers</a></span></dt><dt><span class="section"><a href="howtonot.html#idp125808">General procedure to speed your code up</a></span></dt><dt><span class="section"><a href="howtonot.html#idp134640">Inspecting compiler-generated code</a></span></dt></dl></dd><dt><span class="section"><a href="landa.html">Linux and assembly</a></span></dt></dl></dd><dt><span class="chapter"><a href="assemblers.html">3. Assemblers</a></span></dt><dd><dl><dt><span class="section"><a href="assemblers.html#p-gcc">GCC Inline Assembly</a></span></dt><dd><dl><dt><span class="section"><a href="assemblers.html#idp154672">Where to find GCC</a></span></dt><dt><span class="section"><a href="assemblers.html#idp161568">Where to find docs for GCC Inline Asm</a></span></dt><dt><span class="section"><a href="assemblers.html#idp174864">Invoking GCC to build proper inline assembly code</a></span></dt><dt><span class="section"><a href="assemblers.html#idp175184">Macro support</a></span></dt></dl></dd><dt><span class="section"><a href="gas.html">GAS</a></span></dt><dd><dl><dt><span class="section"><a href="gas.html#idp198432">Where to find it</a></span></dt><dt><span class="section"><a href="gas.html#idp202464">What is this AT&amp;T syntax</a></span></dt><dt><span class="section"><a href="gas.html#idp232288">Intel syntax</a></span></dt><dt><span class="section"><a href="gas.html#idp235024">16-bit mode</a></span></dt><dt><span class="section"><a href="gas.html#idp238880">Macro support</a></span></dt></dl></dd><dt><span class="section"><a href="nasm.html">NASM</a></span></dt><dd><dl><dt><span class="section"><a href="nasm.html#p-nasm-where">Where to find NASM</a></span></dt><dt><span class="section"><a href="nasm.html#idp251072">What it does</a></span></dt></dl></dd><dt><span class="section"><a href="other.html">Other Assemblers</a></span></dt><dd><dl><dt><span class="section"><a href="other.html#idp264000">AS86</a></span></dt><dt><span class="section"><a href="other.html#idp273920">YASM</a></span></dt><dt><span class="section"><a href="other.html#idp275680">FASM</a></span></dt><dt><span class="section"><a href="other.html#idp278064">OSIMPA (SHASM)</a></span></dt><dt><span class="section"><a href="other.html#idp281344">AASM</a></span></dt><dt><span class="section"><a href="other.html#idp285728">TDASM</a></span></dt><dt><span class="section"><a href="other.html#idp288960">HLA</a></span></dt><dt><span class="section"><a href="other.html#idp293712">TALC</a></span></dt><dt><span class="section"><a href="other.html#idp298320">Free Pascal</a></span></dt><dt><span class="section"><a href="other.html#idp307328">Win32Forth assembler</a></span></dt><dt><span class="section"><a href="other.html#idp310896">Terse</a></span></dt><dt><span class="section"><a href="other.html#idp316544">Non-free and/or Non-32bit x86 assemblers</a></span></dt></dl></dd></dl></dd><dt><span class="chapter"><a href="metaprogramming.html">4. Metaprogramming</a></span></dt><dd><dl><dt><span class="section"><a href="metaprogramming.html#idp323248">External filters</a></span></dt><dd><dl><dt><span class="section"><a href="metaprogramming.html#p-cpp">CPP</a></span></dt><dt><span class="section"><a href="metaprogramming.html#p-m4">M4</a></span></dt><dt><span class="section"><a href="metaprogramming.html#idp334464">Macroprocessing with your own filter</a></span></dt></dl></dd><dt><span class="section"><a href="meta.html">Metaprogramming</a></span></dt><dd><dl><dt><span class="section"><a href="meta.html#idp346032">Backends from compilers</a></span></dt><dt><span class="section"><a href="meta.html#idp347744">The New-Jersey Machine-Code Toolkit</a></span></dt><dt><span class="section"><a href="meta.html#idp349936">TUNES</a></span></dt></dl></dd></dl></dd><dt><span class="chapter"><a href="conventions.html">5. Calling conventions</a></span></dt><dd><dl><dt><span class="section"><a href="conventions.html#idp354592">Linux</a></span></dt><dd><dl><dt><span class="section"><a href="conventions.html#idp355840">Linking to GCC</a></span></dt><dt><span class="section"><a href="conventions.html#idp366128">ELF vs a.out problems</a></span></dt><dt><span class="section"><a href="conventions.html#idp370688">Direct Linux syscalls</a></span></dt><dt><span class="section"><a href="conventions.html#idp425056">Hardware I/O under Linux</a></span></dt><dt><span class="section"><a href="conventions.html#idp435840">Accessing 16-bit drivers from Linux/i386</a></span></dt></dl></dd><dt><span class="section"><a href="dos.html">DOS and Windows</a></span></dt><dt><span class="section"><a href="ownos.html">Your own OS</a></span></dt></dl></dd><dt><span class="chapter"><a href="quickstart.html">6. Quick start</a></span></dt><dd><dl><dt><span class="section"><a href="quickstart.html#idp462176">Introduction</a></span></dt><dd><dl><dt><span class="section"><a href="quickstart.html#idp467008">Tools you need</a></span></dt></dl></dd><dt><span class="section"><a href="hello.html">Hello, world!</a></span></dt><dd><dl><dt><span class="section"><a href="hello.html#idp475040">Program layout</a></span></dt><dt><span class="section"><a href="hello.html#idp479584">NASM (hello.asm)</a></span></dt><dt><span class="section"><a href="hello.html#idp482592">GAS (hello.S)</a></span></dt></dl></dd><dt><span class="section"><a href="build.html">Building an executable</a></span></dt><dd><dl><dt><span class="section"><a href="build.html#idp486288">Producing object code</a></span></dt><dt><span class="section"><a href="build.html#idp492336">Producing executable</a></span></dt></dl></dd><dt><span class="section"><a href="mips.html">MIPS Example</a></span></dt></dl></dd><dt><span class="chapter"><a href="resources.html">7. Resources</a></span></dt><dt><span class="chapter"><a href="faq.html">8. Frequently Asked Questions</a></span></dt><dt><span class="appendix"><a href="history.html">A. History</a></span></dt><dt><span class="appendix"><a href="acknowledgements.html">B. Acknowledgements</a></span></dt><dt><span class="appendix"><a href="endorsements.html">C. Endorsements</a></span></dt><dt><span class="appendix"><a href="fdl.html">D. GNU Free Documentation License</a></span></dt></dl></div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+</div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="introduction.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"> </td><td width="40%" align="right" valign="top"> Chapter 1. Introduction</td></tr></table></div></body></html>

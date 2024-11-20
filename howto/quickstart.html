@@ -1,0 +1,68 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><title>Chapter 6. Quick start</title><meta name="generator" content="DocBook XSL Stylesheets V1.76.1"><meta name="keywords" content="assembly, assembler, asm, inline, 32-bit, IA-32, i386, x86, nasm, gas, as, as86, yasm, fasm, shasm, osimpa, OS, Linux, Unix, kernel, system, libc, glibc, system call, interrupt, small, fast, embedded, hardware, port, macroprocessor, metaprogramming, preprocessor"><link rel="home" href="Assembly-HOWTO.html" title="Linux Assembly HOWTO"><link rel="up" href="Assembly-HOWTO.html" title="Linux Assembly HOWTO"><link rel="prev" href="ownos.html" title="Your own OS"><link rel="next" href="hello.html" title="Hello, world!"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">Chapter 6. Quick start</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="ownos.html">Prev</a> </td><th width="60%" align="center"> </th><td width="20%" align="right"> <a accesskey="n" href="hello.html">Next</a></td></tr></table><hr></div><div class="chapter" title="Chapter 6. Quick start"><div class="titlepage"><div><div><h2 class="title"><a name="s-quick"></a>Chapter 6. Quick start</h2></div></div></div><div class="toc"><p><b>Table of Contents</b></p><dl><dt><span class="section"><a href="quickstart.html#idp462176">Introduction</a></span></dt><dd><dl><dt><span class="section"><a href="quickstart.html#idp467008">Tools you need</a></span></dt></dl></dd><dt><span class="section"><a href="hello.html">Hello, world!</a></span></dt><dd><dl><dt><span class="section"><a href="hello.html#idp475040">Program layout</a></span></dt><dt><span class="section"><a href="hello.html#idp479584">NASM (hello.asm)</a></span></dt><dt><span class="section"><a href="hello.html#idp482592">GAS (hello.S)</a></span></dt></dl></dd><dt><span class="section"><a href="build.html">Building an executable</a></span></dt><dd><dl><dt><span class="section"><a href="build.html#idp486288">Producing object code</a></span></dt><dt><span class="section"><a href="build.html#idp492336">Producing executable</a></span></dt></dl></dd><dt><span class="section"><a href="mips.html">MIPS Example</a></span></dt></dl></div>
+
+
+
+<div class="section" title="Introduction"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="idp462176"></a>Introduction</h2></div></div></div>
+
+
+<p>
+Finally, if you still want to try this crazy idea and write something in
+assembly (if you've reached this section -- you're real assembly fan),
+here's what you need to start.
+</p>
+
+<p>
+As you've read before, you can write for Linux in different ways; I'll show
+how to use <span class="emphasis"><em>direct</em></span> kernel calls, since this is the fastest
+way to call kernel service; our code is not linked to any library, does not
+use ELF interpreter, it communicates with kernel directly.
+</p>
+
+<p>
+I will show the same sample program in two assemblers, <span class="command"><strong>nasm</strong></span>
+and <span class="command"><strong>gas</strong></span>, thus showing Intel and AT&amp;T syntax.
+</p>
+
+<p>
+You may also want to read
+<a class="ulink" href="http://asm.sourceforge.net/intro.html" target="_top">
+Introduction to UNIX assembly programming</a> tutorial, it contains sample
+code for other UNIX-like OSes.
+</p>
+
+<div class="section" title="Tools you need"><div class="titlepage"><div><div><h3 class="title"><a name="idp467008"></a>Tools you need</h3></div></div></div>
+
+
+<p>
+First of all you need assembler (compiler) -- <span class="command"><strong>nasm</strong></span> or
+<span class="command"><strong>gas</strong></span>.
+</p>
+
+<p>
+Second, you need a linker -- <span class="command"><strong>ld</strong></span>, since assembler produces
+only object code. Almost all distributions have <span class="application">gas</span>
+and <span class="application">ld</span>, in the binutils package.
+</p>
+
+<p>
+As for <span class="application">nasm</span>, you may have to download and install
+binary packages for Linux and docs from the
+<a class="link" href="nasm.html#p-nasm-where" title="Where to find NASM">nasm site</a>; note that several distributions
+(Stampede, Debian, SuSe, Mandrake) already have <span class="application">nasm</span>,
+check first.
+</p>
+
+<p>
+If you're going to dig in, you should also install include files for your OS,
+and if possible, kernel source.
+</p>
+</div>
+</div>
+
+
+
+
+
+
+
+</div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="ownos.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="hello.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">Your own OS </td><td width="20%" align="center"><a accesskey="h" href="Assembly-HOWTO.html">Home</a></td><td width="40%" align="right" valign="top"> Hello, world!</td></tr></table></div></body></html>

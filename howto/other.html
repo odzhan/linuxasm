@@ -1,0 +1,323 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><title>Other Assemblers</title><meta name="generator" content="DocBook XSL Stylesheets V1.76.1"><meta name="keywords" content="assembly, assembler, asm, inline, 32-bit, IA-32, i386, x86, nasm, gas, as, as86, yasm, fasm, shasm, osimpa, OS, Linux, Unix, kernel, system, libc, glibc, system call, interrupt, small, fast, embedded, hardware, port, macroprocessor, metaprogramming, preprocessor"><link rel="home" href="Assembly-HOWTO.html" title="Linux Assembly HOWTO"><link rel="up" href="assemblers.html" title="Chapter 3. Assemblers"><link rel="prev" href="nasm.html" title="NASM"><link rel="next" href="metaprogramming.html" title="Chapter 4. Metaprogramming"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">Other Assemblers</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="nasm.html">Prev</a> </td><th width="60%" align="center">Chapter 3. Assemblers</th><td width="20%" align="right"> <a accesskey="n" href="metaprogramming.html">Next</a></td></tr></table><hr></div><div class="section" title="Other Assemblers"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="p-other"></a>Other Assemblers</h2></div></div></div>
+
+
+
+<p>
+There are other assemblers with various interesting and outstanding features
+which may be of your interest as well.
+</p>
+
+<div class="note" title="Note" style="margin-left: 0.5in; margin-right: 0.5in;"><h3 class="title">Note</h3>
+<p>
+They can be in various stages of development, and can be
+non-classic/high-level/whatever else.
+</p>
+</div>
+
+<div class="section" title="AS86"><div class="titlepage"><div><div><h3 class="title"><a name="idp264000"></a>AS86</h3></div></div></div>
+
+
+<p>
+AS86 is a 80x86 assembler (16-bit and 32-bit) with integrated macro support.
+It has mostly Intel-syntax, though it differs slightly as for addressing modes.
+Some time ago it was used in a several projects, including the Linux kernel,
+but eventually most of those projects have moved to GAS or NASM. AFAIK, only
+ELKS continues to use it.
+</p>
+
+<p>
+AS86 can be found at
+<a class="ulink" href="http://www.debath.co.uk/dev86/" target="_top">
+http://www.debath.co.uk/dev86/</a>, in the bin86 package with linker (ld86),
+or as separate archive. Documentation is available as the man page and as.doc
+from the source package. When in doubt, the source code itself is often a good
+doc: though it is not very well commented, the programming style is
+straightforward. AS86 is part of a number of BSD and Linux distributions.
+</p>
+
+<div class="note" title="Note" style="margin-left: 0.5in; margin-right: 0.5in;"><h3 class="title">Note</h3>
+<p>
+AS86 is primarily a 16 bit assembler.
+</p>
+</div>
+
+<div class="note" title="Using AS86 with BCC" style="margin-left: 0.5in; margin-right: 0.5in;"><h3 class="title">Using AS86 with BCC</h3>
+
+
+<p>
+Here's the GNU Makefile entry for using BCC to transform
+<code class="filename">.s</code> asm into both a.out <code class="filename">.o</code> object
+and <code class="filename">.l</code> listing:
+</p>
+
+<p>
+</p><pre class="programlisting">
+%.o %.l:    %.s
+    bcc -3 -G -c -A-d -A-l -A$*.l -o $*.o $&lt;
+</pre><p>
+</p>
+
+<p>
+Remove the <code class="literal">%.l</code>, <code class="literal">-A-l</code>, and
+<code class="literal">-A$*.l</code>, if you don't want any listing. If you want something
+else than a.out, you can examine BCC docs about the other supported formats,
+and/or use the objcopy utility from the GNU binutils package.
+</p>
+</div>
+</div>
+
+<div class="section" title="YASM"><div class="titlepage"><div><div><h3 class="title"><a name="idp273920"></a>YASM</h3></div></div></div>
+
+
+<p>
+YASM is a complete rewrite of the NASM assembler under the "new" BSD License.
+It is designed from the ground up to allow for multiple syntaxes to be
+supported (eg, NASM, TASM, GAS, etc.) in addition to multiple output object
+formats including COFF, Win32 and Mach-O. Another primary module of the overall
+design is an optimizer module.
+</p>
+
+</div>
+
+<div class="section" title="FASM"><div class="titlepage"><div><div><h3 class="title"><a name="idp275680"></a>FASM</h3></div></div></div>
+
+<p>
+FASM (flat assembler) is a fast, efficient 80x86 assembler that runs in
+'flat real mode'. Unlike many other 80x86 assemblers, FASM only requires the
+source code to include the information it really needs. It is written in itself
+and is very small and fast. It runs on DOS/Windows/Linux and can produce flat
+binary, DOS EXE, Win32 PE, COFF and Linux ELF output. See
+<a class="ulink" href="http://flatassembler.net" target="_top">http://flatassembler.net</a>.
+</p>
+</div>
+
+<div class="section" title="OSIMPA (SHASM)"><div class="titlepage"><div><div><h3 class="title"><a name="idp278064"></a>OSIMPA (SHASM)</h3></div></div></div>
+
+
+<p>
+osimpa is an assembler for Intel 80386 processors and subsequent, written
+entirely in the GNU Bash command interpreter shell. The predecessor of osimpa
+was shasm. osimpa is much cleaned up, can create useful Linux ELF executables,
+and has various HLL-like extensions and programmer convenience commands.
+</p>
+
+<p>
+It is (of course) slower than other assemblers. It has its own syntax (and uses
+its own names for x86 opcodes) Fairly good documentation is included. Check it
+out: <a class="ulink" href="ftp://linux01.gwdg.de/pub/cLIeNUX/interim/" target="_top">
+ftp://linux01.gwdg.de/pub/cLIeNUX/interim/</a> (Access is password
+controlled). You will probably not use it on regular basis, but at least it
+deserves your interest as an interesting idea.
+</p>
+</div>
+
+<div class="section" title="AASM"><div class="titlepage"><div><div><h3 class="title"><a name="idp281344"></a>AASM</h3></div></div></div>
+
+
+<p>
+Aasm is an advanced assembler designed to support several target architectures.
+It has been designed to be easily extended and, should be considered as a good
+alternative to monolithic assembler development for each new target CPUs
+and binary file formats.
+</p>
+
+<p>
+Aasm should make assembly programming easier for developer, by providing
+a set of advanced features including symbol scopes, an expressions engine,
+big integer support, macro capability, numerous and accurate warning messages.
+Its dynamic modular architecture enables Aasm to extend its set of features
+with plug-ins by taking advantages of dynamic libraries.
+</p>
+
+<p>
+The input module supports Intel syntax (like nasm, tasm, masm, etc.).
+The x86 assembler module supports all opcodes up to P6 including MMX, SSE
+and 3DNow! extensions. F-CPU and SPARC assembler modules are under development.
+Several output modules are available for ELF, COFF, IntelHex, and raw binary
+formats.
+</p>
+
+<p>
+<a class="ulink" href="http://savannah.nongnu.org/projects/aasm/" target="_top">
+http://savannah.nongnu.org/projects/aasm/</a>
+</p>
+</div>
+
+<div class="section" title="TDASM"><div class="titlepage"><div><div><h3 class="title"><a name="idp285728"></a>TDASM</h3></div></div></div>
+
+
+<p>
+The Table Driven Assembler (TDASM) is a <span class="emphasis"><em>free</em></span> portable
+cross assembler for any kind of assembly language. It should be possible to use
+it as a compiler to any target microprocessor using a table that defines the
+compilation process.
+</p>
+
+<p>
+It is available from <a class="ulink" href="http://www.penguin.cz/~niki/tdasm/" target="_top">
+http://www.penguin.cz/~niki/tdasm/</a> but is seems it is no longer
+actively maintained.
+</p>
+</div>
+
+<div class="section" title="HLA"><div class="titlepage"><div><div><h3 class="title"><a name="idp288960"></a>HLA</h3></div></div></div>
+
+
+<p>
+<a class="ulink" href="http://www.plantation-productions.com/Webster/HighLevelAsm/index.html" target="_top">
+HLA</a> is a <span class="emphasis"><em>H</em></span>igh <span class="emphasis"><em>L</em></span>evel
+<span class="emphasis"><em>A</em></span>ssembly language. It uses a high level language like
+syntax (similar to Pascal, C/C++, and other HLLs) for variable declarations,
+procedure declarations, and procedure calls. It uses a modified assembly
+language syntax for the standard machine instructions. It also provides several
+high level language style control structures (if, while, repeat..until, etc.)
+that help you write much more readable code.
+</p>
+
+<p>
+HLA is free and comes with source, Linux and Win32 versions available. On Win32
+you need MASM and a 32-bit version of MS-link on Win32, on Linux you need GAS,
+because HLA produces specified assembler code and uses that assembler for final
+assembling and linking.
+</p>
+</div>
+
+<div class="section" title="TALC"><div class="titlepage"><div><div><h3 class="title"><a name="idp293712"></a>TALC</h3></div></div></div>
+
+
+<p>
+<a class="ulink" href="http://www.cs.cornell.edu/talc/" target="_top">TALC</a> is another free
+MASM/Win32 based compiler (however it supports ELF output, does it?).
+</p>
+
+<p>
+TAL stands for <span class="emphasis"><em>T</em></span>yped <span class="emphasis"><em>A</em></span>ssembly
+<span class="emphasis"><em>L</em></span>anguage. It extends traditional untyped assembly
+languages with typing annotations, memory management primitives, and a sound
+set of typing rules, to guarantee the memory safety, control flow safety,and
+type safety of TAL programs. Moreover, the typing constructs are expressive
+enough to encode most source language programming features including records
+and structures, arrays, higher-order and polymorphic functions, exceptions,
+abstract data types, subtyping, and modules. Just as importantly, TAL is
+flexible enough to admit many low-level compiler optimizations. Consequently,
+TAL is an ideal target platform for type-directed compilers that want to
+produce verifiably safe code for use in secure mobile code applications or
+extensible operating system kernels.
+</p>
+</div>
+
+<div class="section" title="Free Pascal"><div class="titlepage"><div><div><h3 class="title"><a name="idp298320"></a>Free Pascal</h3></div></div></div>
+
+
+<p>
+<a class="ulink" href="http://www.freepascal.org" target="_top">Free Pascal</a> has an internal
+32-bit assembler (based on NASM tables) and a switchable output that allows:
+</p><div class="itemizedlist"><ul class="itemizedlist" type="disc"><li class="listitem">
+<p>
+Binary (ELF and coff when crosscompiled .o) output
+</p>
+</li><li class="listitem">
+<p>
+NASM
+</p>
+</li><li class="listitem">
+<p>
+MASM
+</p>
+</li><li class="listitem">
+<p>
+TASM
+</p>
+</li><li class="listitem">
+<p>
+AS (aout,coff, elf32)
+</p>
+</li></ul></div><p>
+</p>
+
+<p>
+The MASM and TASM output are not as good debugged as the other two, but can be
+handy sometimes.
+</p>
+
+<p>
+The assembler's look and feel are based on Turbo Pascal's internal BASM, and
+the IDE supports similar highlighting, and FPC can fully integrate with gcc
+(on C level, not C++).
+</p>
+
+<p>
+Using a dummy RTL, one can even generate pure assembler programs.
+</p>
+</div>
+
+<div class="section" title="Win32Forth assembler"><div class="titlepage"><div><div><h3 class="title"><a name="idp307328"></a>Win32Forth assembler</h3></div></div></div>
+
+
+<p>
+Win32Forth is a <span class="emphasis"><em>free</em></span> 32-bit ANS FORTH system that
+successfully runs under Win32s, Win95, Win/NT. It includes a free 32-bit
+assembler (either prefix or postfix syntax) integrated into the reflective
+FORTH language. Macro processing is done with the full power of the reflective
+language FORTH; however, the only supported input and output contexts is
+Win32For itself (no dumping of <code class="filename">.obj</code> file, but you could
+add that feature yourself, of course). Find it at
+<a class="ulink" href="ftp://ftp.forth.org/pub/Forth/Compilers/native/windows/Win32For/" target="_top">
+ftp://ftp.forth.org/pub/Forth/Compilers/native/windows/Win32For/</a>.
+</p>
+</div>
+
+<div class="section" title="Terse"><div class="titlepage"><div><div><h3 class="title"><a name="idp310896"></a>Terse</h3></div></div></div>
+
+
+<p>
+<a class="ulink" href="http://www.terse.com" target="_top">Terse</a> is a programming tool that
+provides <span class="emphasis"><em>THE</em></span> most compact assembler syntax for the x86
+family! However, it is evil proprietary software. It is said that there was a
+project for a free clone somewhere, that was abandoned after worthless pretenses
+that the syntax would be owned by the original author. Thus, if you're looking
+for a nifty programming project related to assembly hacking, I invite you to
+develop a terse-syntax frontend to NASM, if you like that syntax.
+</p>
+
+<p>
+As an interesting historic remark, on
+<a class="ulink" href="news:comp.compilers" target="_top">comp.compilers</a>,
+</p>
+
+<p>
+</p><div class="literallayout"><p><br>
+1999/07/11 19:36:51, the moderator wrote:<br>
+<br>
+"There's no reason that assemblers have to have awful syntax.  About<br>
+30 years ago I used Niklaus Wirth's PL360, which was basically a S/360<br>
+assembler with Algol syntax and a a little syntactic sugar like while<br>
+loops that turned into the obvious branches.  It really was an<br>
+assembler, e.g., you had to write out your expressions with explicit<br>
+assignments of values to registers, but it was nice.  Wirth used it to<br>
+write Algol W, a small fast Algol subset, which was a predecessor to<br>
+Pascal.  As is so often the case, Algol W was a significant<br>
+improvement over many of its successors. -John"<br>
+</p></div><p>
+</p>
+</div>
+
+<div class="section" title="Non-free and/or Non-32bit x86 assemblers"><div class="titlepage"><div><div><h3 class="title"><a name="idp316544"></a>Non-free and/or Non-32bit x86 assemblers</h3></div></div></div>
+
+
+<p>
+You may find more about them, together with the basics of x86 assembly
+programming, in the
+<a class="link" href="resources.html#s-res-gen">Raymond Moon's x86 assembly FAQ</a>.
+</p>
+
+<p>
+Note that all DOS-based assemblers should work inside the Linux DOS Emulator,
+as well as other similar emulators, so that if you already own one, you can
+still use it inside a real OS. Recent DOS-based assemblers also support COFF
+and/or other object file formats that are supported by the GNU BFD library,
+so that you can use them together with your free 32-bit tools, perhaps using
+GNU objcopy (part of the binutils) as a conversion filter.
+</p>
+</div>
+</div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="nasm.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="assemblers.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="metaprogramming.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">NASM </td><td width="20%" align="center"><a accesskey="h" href="Assembly-HOWTO.html">Home</a></td><td width="40%" align="right" valign="top"> Chapter 4. Metaprogramming</td></tr></table></div></body></html>

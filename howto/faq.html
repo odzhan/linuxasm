@@ -1,0 +1,395 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><title>Chapter 8. Frequently Asked Questions</title><meta name="generator" content="DocBook XSL Stylesheets V1.76.1"><meta name="keywords" content="assembly, assembler, asm, inline, 32-bit, IA-32, i386, x86, nasm, gas, as, as86, yasm, fasm, shasm, osimpa, OS, Linux, Unix, kernel, system, libc, glibc, system call, interrupt, small, fast, embedded, hardware, port, macroprocessor, metaprogramming, preprocessor"><link rel="home" href="Assembly-HOWTO.html" title="Linux Assembly HOWTO"><link rel="up" href="Assembly-HOWTO.html" title="Linux Assembly HOWTO"><link rel="prev" href="resources.html" title="Chapter 7. Resources"><link rel="next" href="history.html" title="Appendix A. History"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">Chapter 8. Frequently Asked Questions</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="resources.html">Prev</a> </td><th width="60%" align="center"> </th><td width="20%" align="right"> <a accesskey="n" href="history.html">Next</a></td></tr></table><hr></div><div class="chapter" title="Chapter 8. Frequently Asked Questions"><div class="titlepage"><div><div><h2 class="title"><a name="s-faq"></a>Chapter 8. Frequently Asked Questions</h2></div></div></div>
+
+
+
+<p>
+Here are frequently asked questions (with answers)
+about Linux assembly programming.
+Some of the questions (and the answers) were taken from the
+the <a class="link" href="resources.html#s-res-list" title="Mailing list">linux-assembly mailing list</a>.
+</p>
+
+<div class="qandaset" title="Frequently Asked Questions"><a name="idp523312"></a><dl><dt>8.1. <a href="faq.html#idp524192">
+How do I do graphics programming in Linux?
+</a></dt><dt>8.2. <a href="faq.html#idp530512">
+How do I debug pure assembly code under Linux?
+</a></dt><dt>8.3. <a href="faq.html#idp543056">Any other useful debugging tools?</a></dt><dt>8.4. <a href="faq.html#idp547824">
+How do I access BIOS functions from Linux (BSD, BeOS, etc)?
+</a></dt><dt>8.5. <a href="faq.html#idp551504">
+Is it possible to write kernel modules in assembly?
+</a></dt><dt>8.6. <a href="faq.html#idp560256">
+How do I allocate memory dynamically?
+</a></dt><dt>8.7. <a href="faq.html#idp567648">
+I can't understand how to use select system call!
+</a></dt></dl><table border="0" width="100%" summary="Q and A Set"><col align="left" width="1%"><col><tbody>
+<tr class="question" title="8.1."><td align="left" valign="top"><a name="idp524192"></a><a name="idp524448"></a><p><b>8.1.</b></p></td><td align="left" valign="top"><p>
+How do I do graphics programming in Linux?
+</p></td></tr>
+
+<tr class="answer"><td align="left" valign="top"></td><td align="left" valign="top"><p>
+An answer from <a class="ulink" href="mailto:paulf@gam.co.za" target="_top">Paul Furber</a>:
+</p><p>
+</p><pre class="screen">
+Ok you have a number of options to graphics in Linux. Which one you use
+depends on what you want to do. There isn't one Web site with all the
+information but here are some tips:
+
+SVGALib: This is a C library for console SVGA access.
+Pros: very easy to learn, good coding examples, not all that different
+from equivalent gfx libraries for DOS, all the effects you know from DOS
+can be converted with little difficulty.
+Cons: programs need superuser rights to run since they write directly to
+the hardware, doesn't work with all chipsets, can't run under X-Windows.
+Search for svgalib-1.4.x on http://ftp.is.co.za
+
+Framebuffer: do it yourself graphics at SVGA res
+Pros: fast, linear mapped video access, ASM can be used if you want :)
+Cons: has to be compiled into the kernel, chipset-specific issues, must
+switch out of X to run, relies on good knowledge of linux system calls
+and kernel, tough to debug
+Examples: asmutils (http://www.linuxassembly.org) and the leaves example
+and my own site for some framebuffer code and tips in asm
+(http://ma.verick.co.za/linux4k/)
+
+Xlib: the application and development libraries for XFree86.
+Pros: Complete control over your X application
+Cons: Difficult to learn, horrible to work with and requires quite a bit
+of knowledge as to how X works at the low level. 
+Not recommended but if you're really masochistic go for it. All the
+include and lib files are probably installed already so you have what
+you need. 
+
+Low-level APIs: include PTC, SDL, GGI and Clanlib
+Pros: very flexible, run under X or the console, generally abstract away
+the video hardware a little so you can draw to a linear surface, lots of
+good coding examples, can link to other APIs like OpenGL and sound libs,
+Windows DirectX versions for free
+Cons: Not as fast as doing it yourself, often in development so versions
+can (and do) change frequently.
+Examples: PTC and GGI have excellent demos, SDL is used in sdlQuake,
+Myth II, Civ CTP and Clanlib has been used for games as well.
+
+High-level APIs: OpenGL - any others?
+Pros: clean api, tons of functionality and examples, industry standard
+so you can learn from SGI demos for example
+Cons: hardware acceleration is normally a must, some quirks between
+versions and platforms
+Examples: loads - check out www.mesa3d.org under the links section.
+
+To get going try looking at the svgalib examples and also install SDL
+and get it working. After that, the sky's the limit.
+</pre><p>
+</p></td></tr>
+
+<tr class="question" title="8.2."><td align="left" valign="top"><a name="idp530512"></a><a name="idp530768"></a><p><b>8.2.</b></p></td><td align="left" valign="top"><p>
+How do I debug pure assembly code under Linux?
+</p></td></tr>
+
+<tr class="answer"><td align="left" valign="top"></td><td align="left" valign="top"><p>
+There's an early version of the
+<a class="ulink" href="http://ald.sourceforge.net" target="_top">Assembly Language Debugger</a>,
+which is designed to work with assembly code,
+and is portable enough to run on Linux and *BSD.
+It is already functional and should be the right choice, check it out!
+</p><p>
+You can also try <span class="command"><strong>gdb</strong></span> ;).
+Although it is source-level debugger, it can be used to debug
+pure assembly code, and with some trickery you can make
+<span class="command"><strong>gdb</strong></span> to do what you need
+(unfortunately, nasm '-g' switch does not generate
+proper debug info for gdb; this is nasm bug, I think).
+Here's an answer from <a class="ulink" href="mailto:dl@gazeta.ru" target="_top">Dmitry Bakhvalov</a>:
+</p><p>
+</p><pre class="screen">
+Personally, I use gdb for debugging asmutils. Try this:
+ 
+1) Use the following stuff to compile:
+   $ nasm -f elf -g smth.asm
+   $ ld -o smth smth.o
+
+2) Fire up gdb:
+   $ gdb smth
+
+3) In gdb:
+   (gdb) disassemble _start
+   Place a breakpoint at _start+1 (If placed at _start the breakpoint
+   wouldnt work, dunno why)
+   (gdb) b *0x8048075
+
+   To step thru the code I use the following macro:
+   (gdb)define n
+   &gt;ni
+   &gt;printf "eax=%x ebx=%x ...etc...",$eax,$ebx,...etc...
+   &gt;disassemble $pc $pc+15
+   &gt;end
+
+   Then start the program with r command and debug with n.
+
+   Hope this helps.
+</pre><p>
+</p><p>
+An additional note from ???:
+</p><p>
+</p><pre class="screen">
+    I have such a macro in my .gdbinit for quite some time now, and it
+    for sure makes life easier. A small difference : I use "x /8i $pc",
+    which guarantee a fixed number of disassembled instructions. Then,
+    with a well chosen size for my xterm, gdb output looks like it is
+    refreshed, and not scrolling.
+</pre><p>
+</p><p>
+If you want to set breakpoints across your code, you can just use
+<code class="function">int 3</code> instruction as breakpoint
+(instead of entering address manually in <span class="command"><strong>gdb</strong></span>).
+</p><p>
+If you're using <span class="application">gas</span>, you should consult
+<span class="application">gas</span> and <span class="application">gdb</span> related
+<a class="ulink" href="http://asm.sourceforge.net/resources.html#tutorials" target="_top">tutorials</a>.
+</p></td></tr>
+
+<tr class="question" title="8.3."><td align="left" valign="top"><a name="idp543056"></a><a name="idp543472"></a><p><b>8.3.</b></p></td><td align="left" valign="top"><p>Any other useful debugging tools?</p></td></tr>
+
+<tr class="answer"><td align="left" valign="top"></td><td align="left" valign="top"><p>
+Definitely <span class="command"><strong>strace</strong></span> can help a lot
+(<span class="command"><strong>ktrace</strong></span> and <span class="command"><strong>kdump</strong></span>
+on FreeBSD),
+it is used to trace system calls and signals.
+Read its manual page (<span class="command"><strong>man strace</strong></span>) and
+<span class="command"><strong>strace - -help</strong></span> output for details.
+</p></td></tr>
+
+<tr class="question" title="8.4."><td align="left" valign="top"><a name="idp547824"></a><a name="idp548144"></a><p><b>8.4.</b></p></td><td align="left" valign="top"><p>
+How do I access BIOS functions from Linux (BSD, BeOS, etc)?
+</p></td></tr>
+
+<tr class="answer"><td align="left" valign="top"></td><td align="left" valign="top"><p>
+Short answer is -- noway. This is protected mode, use OS services instead.
+Again, you can't use <code class="function">int 0x10</code>,
+<code class="function">int 0x13</code>, etc.
+Fortunately almost everything can be implemented
+by means of system calls or library functions.
+In the worst case you may go through direct port access,
+or make a kernel patch to implement needed functionality,
+or use LRMI library to access BIOS functions.
+</p></td></tr>
+
+<tr class="question" title="8.5."><td align="left" valign="top"><a name="idp551504"></a><a name="idp551824"></a><p><b>8.5.</b></p></td><td align="left" valign="top"><p>
+Is it possible to write kernel modules in assembly?
+</p></td></tr>
+
+<tr class="answer"><td align="left" valign="top"></td><td align="left" valign="top"><p>
+Yes, indeed it is. While in general it is not a good idea
+(it hardly will speedup anything), there may be a need of such wizardy. 
+The process of writing a module itself is not that hard - -
+a module must have some predefined global function,
+it may also need to call some external functions from the kernel.
+Examine kernel source code (that can be built as module) for details.
+</p><p>
+Meanwhile, here's an example of a minimum dumb kernel module
+(<code class="filename">module.asm</code>)
+(source is based on example by mammon_ from APJ #8):
+</p><p>
+</p><pre class="programlisting">
+section .text
+
+	global init_module
+	global cleanup_module
+	global kernel_version
+
+	extern printk
+
+init_module:
+	push	dword str1
+	call	printk
+	pop	eax
+	xor	eax,eax
+	ret
+
+cleanup_module:
+	push	dword str2
+	call	printk
+	pop	eax
+	ret
+	
+str1		db	"init_module done",0xa,0
+str2		db	"cleanup_module done",0xa,0
+
+kernel_version	db	"2.2.18",0
+</pre><p>
+</p><p>
+The only thing this example does is reporting its actions.
+Modify <code class="filename">kernel_version</code> to match yours, and build module with:
+</p><p>
+</p><pre class="screen">
+$ nasm -f elf -o module.m module.asm
+</pre><p>
+</p><p>
+</p><pre class="screen">
+$ ld -r -o module.o module.m
+</pre><p>
+</p><p>
+Now you can play with it using <span class="command"><strong>insmod/rmmod/lsmod</strong></span>
+(root privilidged are required); a lot of fun, huh?
+</p></td></tr>
+
+<tr class="question" title="8.6."><td align="left" valign="top"><a name="idp560256"></a><a name="idp560512"></a><p><b>8.6.</b></p></td><td align="left" valign="top"><p>
+How do I allocate memory dynamically?
+</p></td></tr>
+
+<tr class="answer"><td align="left" valign="top"></td><td align="left" valign="top"><p>
+A laconic answer from <a class="ulink" href="mailto:phpr@snafu.de" target="_top">H-Peter Recktenwald</a>:
+</p><p>
+</p><pre class="programlisting">
+	ebx := 0	(in fact, any value below .bss seems to do)
+	sys_brk
+	eax := current top (of .bss section)
+
+	ebx := [ current top &lt; ebx &lt; (esp - 16K) ]
+	sys_brk
+	eax := new top of .bss
+</pre><p>
+</p></td></tr>
+
+<tr class="answer"><td align="left" valign="top"></td><td align="left" valign="top"><p>
+An extensive answer from <a class="ulink" href="mailto:ee97034@fe.up.pt" target="_top">Tiago Gasiba</a>:
+</p><p>
+</p><pre class="programlisting">
+section	.bss
+
+var1	resb	1
+
+section	.text
+
+;
+;allocate memory
+;
+
+%define	LIMIT	0x4000000			; about 100Megs
+
+	mov	ebx,0				; get bottom of data segment
+	call	sys_brk
+
+	cmp	eax,-1				; ok?
+	je	erro1
+
+	add	eax,LIMIT			; allocate +LIMIT memory
+	mov	ebx,eax
+	call	sys_brk
+	
+	cmp	eax,-1				; ok?
+	je	erro1
+
+	cmp	eax,var1+1			; has the data segment grown?
+	je	erro1
+
+;
+;use allocated memory
+;
+						; now eax contains bottom of
+						; data segment
+	mov	ebx,eax				; save bottom
+	mov	eax,var1			; eax=beginning of data segment
+repeat:	
+	mov	word	[eax],1			; fill up with 1's
+	inc	eax
+	cmp	ebx,eax				; current pos = bottom?
+	jne	repeat
+
+;
+;free memory
+;
+
+	mov	ebx,var1			; deallocate memory
+	call	sys_brk				; by forcing its beginning=var1
+
+	cmp	eax,-1				; ok?
+	je	erro2
+</pre><p>
+</p></td></tr>
+
+<tr class="question" title="8.7."><td align="left" valign="top"><a name="idp567648"></a><a name="idp567904"></a><p><b>8.7.</b></p></td><td align="left" valign="top"><p>
+I can't understand how to use <code class="function">select</code> system call!
+</p></td></tr>
+
+<tr class="answer"><td align="left" valign="top"></td><td align="left" valign="top"><p>
+An answer from <a class="ulink" href="mailto:mochel@transmeta.com" target="_top">Patrick Mochel</a>:
+</p><p>
+</p><pre class="programlisting">
+When you call sys_open, you get back a file descriptor, which is simply an
+index into a table of all the open file descriptors that your process has.
+stdin, stdout, and stderr are always 0, 1, and 2, respectively, because
+that is the order in which they are always open for your process from there.
+Also, notice that the first file descriptor that you open yourself (w/o first
+closing any of those magic three descriptors) is always 3, and they increment
+from there.
+
+Understanding the index scheme will explain what select does. When you
+call select, you are saying that you are waiting certain file descriptors
+to read from, certain ones to write from, and certain ones to watch from
+exceptions from. Your process can have up to 1024 file descriptors open,
+so an fd_set is just a bit mask describing which file descriptors are valid
+for each operation. Make sense?
+
+Since each fd that you have open is just an index, and it only needs to be
+on or off for each fd_set, you need only 1024 bits for an fd_set structure.
+1024 / 32 = 32 longs needed to represent the structure.
+
+Now, for the loose example.
+Suppose you want to read from a file descriptor (w/o timeout).
+
+- Allocate the equivalent to an fd_set.  
+
+.data
+
+my_fds: times 32 dd 0
+
+- open the file descriptor that you want to read from.
+
+- set that bit in the fd_set structure.
+
+   First, you need to figure out which of the 32 dwords the bit is in.  
+
+   Then, use bts to set the bit in that dword. bts will do a modulo 32
+   when setting the bit. That's why you need to first figure out which
+   dword to start with.
+
+   mov edx, 0
+   mov ebx, 32
+   div ebx
+
+   lea ebx, my_fds
+   bts ebx[eax * 4], edx
+
+- repeat the last step for any file descriptors you want to read from.
+
+- repeat the entire exercise for either of the other two fd_sets if you want action from them.
+
+That leaves two other parts of the equation - the n paramter and the timeout
+parameter. I'll leave the timeout parameter as an exercise for the reader
+(yes, I'm lazy), but I'll briefly talk about the n parameter.
+
+It is the value of the largest file descriptor you are selecting from (from
+any of the fd_sets), plus one. Why plus one? Well, because it's easy to
+determine a mask from that value. Suppose that there is data available on
+x file descriptors, but the highest one you care about is (n - 1). Since
+an fd_set is just a bitmask, the kernel needs some efficient way for
+determining whether to return or not from select. So, it masks off the bits
+that you care about, checks if anything is available from the bits that are
+still set, and returns if there is (pause as I rummage through kernel source).
+Well, it's not as easy as I fantasized it would be. To see how the kernel
+determines that mask, look in fs/select.c in the kernel source tree.
+
+Anyway, you need to know that number, and the easiest way to do it is to save
+the value of the last file descriptor open somewhere so you don't lose it.
+
+Ok, that's what I know. A warning about the code above (as always) is that
+it is not tested. I think it should work, but if it doesn't let me know.
+But, if it starts a global nuclear meltdown, don't call me. ;-)
+</pre><p>
+</p></td></tr>
+</tbody></table></div>
+
+<p>
+<span class="emphasis"><em>That's all for now, folks</em></span>.
+</p>
+</div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="resources.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="history.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">Chapter 7. Resources </td><td width="20%" align="center"><a accesskey="h" href="Assembly-HOWTO.html">Home</a></td><td width="40%" align="right" valign="top"> Appendix A. History</td></tr></table></div></body></html>

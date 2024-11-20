@@ -1,0 +1,103 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><title>Chapter 1. Introduction</title><meta name="generator" content="DocBook XSL Stylesheets V1.76.1"><meta name="keywords" content="assembly, assembler, asm, inline, 32-bit, IA-32, i386, x86, nasm, gas, as, as86, yasm, fasm, shasm, osimpa, OS, Linux, Unix, kernel, system, libc, glibc, system call, interrupt, small, fast, embedded, hardware, port, macroprocessor, metaprogramming, preprocessor"><link rel="home" href="Assembly-HOWTO.html" title="Linux Assembly HOWTO"><link rel="up" href="Assembly-HOWTO.html" title="Linux Assembly HOWTO"><link rel="prev" href="Assembly-HOWTO.html" title="Linux Assembly HOWTO"><link rel="next" href="doyouneed.html" title="Chapter 2. Do you need assembly?"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">Chapter 1. Introduction</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="Assembly-HOWTO.html">Prev</a> </td><th width="60%" align="center"> </th><td width="20%" align="right"> <a accesskey="n" href="doyouneed.html">Next</a></td></tr></table><hr></div><div class="chapter" title="Chapter 1. Introduction"><div class="titlepage"><div><div><h2 class="title"><a name="s-intro"></a>Chapter 1. Introduction</h2></div></div></div>
+
+
+
+<div class="note" title="Note" style="margin-left: 0.5in; margin-right: 0.5in;"><h3 class="title">Note</h3>
+<p>
+You can skip this chapter if you are familiar with HOWTOs, or just hate to
+read all this assembly-unrelated crap.
+</p>
+</div>
+
+<div class="simplesect" title="Legal Blurb"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="idp58032"></a>Legal Blurb</h2></div></div></div>
+
+<p>
+Permission is granted to copy, distribute and/or modify this document under the
+terms of the GNU <a class="ulink" href="http://www.gnu.org/copyleft/fdl.html" target="_top">Free
+Documentation License</a> Version 1.1; with no Invariant Sections, with no
+Front-Cover Texts, and no Back-Cover texts. A copy of the license is included
+in the <a class="xref" href="fdl.html" title="Appendix D. GNU Free Documentation License">GNU Free Documentation License</a> appendix.
+</p>
+
+<p>
+The most recent official version of this document is available from the
+<a class="ulink" href="http://asm.sourceforge.net/howto.html" target="_top">Linux Assembly</a>
+and <a class="ulink" href="http://tldp.org/docs.html" target="_top">LDP</a> sites. If you are
+reading a few-months-old copy, consider checking the above URLs for a new
+version.
+</p>
+</div>
+
+<div class="simplesect" title="Foreword"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="idp62272"></a>Foreword</h2></div></div></div>
+
+<p>
+This document aims answering questions of those who program or want to program
+32-bit x86 assembly using <span class="emphasis"><em>free software</em></span>, particularly
+under the Linux operating system. At many places Universal Resource Locators
+(<acronym class="acronym">URL</acronym>) are given for some software or documentation
+repository. This document also points to other documents about non-free,
+non-x86, or non-32-bit assemblers, although this is not its primary goal. Also
+note that there are FAQs and docs about programming on your favorite platform
+(whatever it is), which you should consult for platform-specific issues, not
+related directly to assembly programming.
+</p>
+
+<p>
+Because the main interest of assembly programming is to build the guts of
+operating systems, interpreters, compilers, and games, where C compiler fails
+to provide the needed expressiveness (performance is more and more seldom as
+issue), we are focusing on development of such kind of software.
+</p>
+
+<p>
+If you don't know what <a class="ulink" href="http://www.gnu.org/philosophy/" target="_top">
+<span class="emphasis"><em>free software</em></span></a> is, please do read
+<span class="emphasis"><em>carefully</em></span> the GNU
+<a class="ulink" href="http://www.gnu.org/copyleft/gpl.html" target="_top">
+General Public License</a> (<acronym class="acronym">GPL</acronym> or
+<acronym class="acronym">copyleft</acronym>), which is used in a lot of free software, and is
+the model for most of their licenses. It generally comes in a file named
+<code class="filename">COPYING</code> (or <code class="filename">COPYING.LIB</code>). Literature
+from the <a class="ulink" href="http://www.fsf.org" target="_top">Free Software Foundation</a>
+(<acronym class="acronym">FSF</acronym>) might help you too. Particularly, the interesting
+feature of free software is that it comes with source code which you can
+consult and correct, or sometimes even borrow from. Read your particular
+license carefully and do comply to it.
+</p>
+</div>
+
+<div class="simplesect" title="Contributions"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="idp71584"></a>Contributions</h2></div></div></div>
+
+<p>
+This is an interactively evolving document: you are especially invited to ask
+questions, to answer questions, to correct given answers, to give pointers to
+new software, to point the current maintainer to bugs or deficiencies in the
+pages. In one word, contribute!
+</p>
+
+<p>
+To contribute, please contact the <a class="link" href="Assembly-HOWTO.html#lnoor">maintainer</a>.
+</p>
+
+<div class="note" title="Note" style="margin-left: 0.5in; margin-right: 0.5in;"><h3 class="title">Note</h3>
+<p>
+At the time of writing, it is <a class="link" href="Assembly-HOWTO.html#lnoor">Leo Noordergraaf</a>
+taking over from <a class="link" href="Assembly-HOWTO.html#konst">Konstantin Boldyshev</a> (since
+version 0.6) and <a class="link" href="Assembly-HOWTO.html#fare">Francois-Rene Rideau</a> (since
+version 0.5).
+</p>
+</div>
+</div>
+
+<div class="simplesect" title="Translations"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="idp77696"></a>Translations</h2></div></div></div>
+
+<p>
+Korean translation of this HOWTO is avalilable at
+<a class="ulink" href="http://kldp.org/HOWTO/html/Assembly-HOWTO/" target="_top">
+http://kldp.org/HOWTO/html/Assembly-HOWTO/</a>.
+Turkish translation of this HOWTO is available at
+<a class="ulink" href="http://belgeler.org/howto/assembly-howto.html" target="_top">
+http://belgeler.org/howto/assembly-howto.html</a>.
+</p>
+</div>
+</div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="Assembly-HOWTO.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="doyouneed.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">Linux Assembly HOWTO </td><td width="20%" align="center"><a accesskey="h" href="Assembly-HOWTO.html">Home</a></td><td width="40%" align="right" valign="top"> Chapter 2. Do you need assembly?</td></tr></table></div></body></html>

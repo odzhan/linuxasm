@@ -1,0 +1,47 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><title>DOS and Windows</title><meta name="generator" content="DocBook XSL Stylesheets V1.76.1"><meta name="keywords" content="assembly, assembler, asm, inline, 32-bit, IA-32, i386, x86, nasm, gas, as, as86, yasm, fasm, shasm, osimpa, OS, Linux, Unix, kernel, system, libc, glibc, system call, interrupt, small, fast, embedded, hardware, port, macroprocessor, metaprogramming, preprocessor"><link rel="home" href="Assembly-HOWTO.html" title="Linux Assembly HOWTO"><link rel="up" href="conventions.html" title="Chapter 5. Calling conventions"><link rel="prev" href="conventions.html" title="Chapter 5. Calling conventions"><link rel="next" href="ownos.html" title="Your own OS"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">DOS and Windows</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="conventions.html">Prev</a> </td><th width="60%" align="center">Chapter 5. Calling conventions</th><td width="20%" align="right"> <a accesskey="n" href="ownos.html">Next</a></td></tr></table><hr></div><div class="section" title="DOS and Windows"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="idp445872"></a>DOS and Windows</h2></div></div></div>
+
+
+
+<p>
+Most DOS extenders come with some interface to DOS services. Read their docs
+about that, but often, they just simulate <code class="function">int 0x21</code> and
+such, so you do "as if" you are in real mode (I doubt they have more than stubs
+and extend things to work with 32-bit operands; they most likely will just
+reflect the interrupt into the real-mode or vm86 handler).
+</p>
+
+<p>
+Docs about DPMI (and much more) can be found on
+<a class="ulink" href="http://en.wikipedia.org/wiki/DOS_Protected_Mode_Interface" target="_top">
+http://en.wikipedia.org/wiki/DOS_Protected_Mode_Interface</a>).
+</p>
+
+<p>
+DJGPP comes with its own (limited) <span class="application">glibc</span>
+derivative/subset/replacement, too.
+</p>
+
+<p>
+It is possible to cross-compile from Linux to DOS, see the
+<code class="filename">devel/msdos/</code> directory of your local FTP mirror for
+metalab.unc.edu; Also see the MOSS DOS-extender from the
+<a class="ulink" href="http://www.cs.utah.edu/projects/flux/" target="_top">Flux project</a>
+from the university of Utah.
+</p>
+
+<p>
+Other documents and FAQs are more DOS-centered; we do not recommend DOS
+development.
+</p>
+
+<p title="Windows and Co.">
+<b>Windows and Co. </b>
+
+This document is not about Windows programming, you can find lots of documents
+about it everywhere... The thing you should know is that there is the
+<a class="ulink" href="http://www.cygwin.com" target="_top">cygwin32.dll library</a>,
+for GNU programs to run on Win32 platform; thus, you can use GCC, GAS,
+all the GNU tools, and many other Unix applications.
+
+</p>
+</div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="conventions.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="conventions.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="ownos.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">Chapter 5. Calling conventions </td><td width="20%" align="center"><a accesskey="h" href="Assembly-HOWTO.html">Home</a></td><td width="40%" align="right" valign="top"> Your own OS</td></tr></table></div></body></html>

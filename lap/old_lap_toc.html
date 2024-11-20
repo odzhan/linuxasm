@@ -1,0 +1,108 @@
+<html><head><title>Linux Assembly Programming: Table Of Contents</title></head>
+<body text="#000000" bgcolor="#FFFFFF">
+
+<p>
+Here is the TOC template, few changes are possible as work goes on
+(new chapters, rearrangement), but in general it is complete.
+It is fairly possible that book will have some chapter on
+assembly programming under *BSD and BeOS as well.
+Source code examples will use NASM Intel syntax and new IA-64 syntax.
+
+<hr>
+
+<h2 align=center>Linux Assembly Programming</h2>
+<h3 align=center>Table of Contents</h3>
+
+<br>
+<br>
+
+<blockquote>
+
+<h3>Preface</h3>
+
+<h3>1. Linux OS</h3> (short introduction and characteristics)
+
+<h3>2. Linux and Assembly</h3>
+
+<ul>
+.1 Why using assembly?<br>
+.2 Common myths about unix and assembly language<br>
+.3 When assembly is needed<br>
+.4 When assembly is useless<br>
+</ul>
+
+<h3>3. Assemblers</h3> (quick overview)
+
+<ul>
+.1 nasm<br>
+.2 gas<br>
+.3 other tools you need (ld, strace, gdb, etc)<br>
+</ul>
+
+<h3>4. Assembly programming</h3>
+
+<ul>
+.1 Two ways to go (libc or not libc)<br>
+.2 Source code layout (sections, etc)<br>
+.3 Compiling a program<br>
+.4 Debugging<br>
+</ul>
+
+<h3>5. System calls</h3>
+
+<ul>
+.1 What is a system call<br>
+.2 View from the kernel side<br>
+.3 View from the userland<br>
+.4 Using system calls<br>
+</ul>
+
+<h3>6. Assembly fun</h3> (going in depth)
+
+<p>[ Linux specific ]
+
+<ul>
+.1 Startup process details<br>
+.2 Treating command line<br>
+.3 Hey, how to... (Q & A)<br>
+</ul>
+
+<p>[ general 32 bit assembly ]
+
+<ul>
+.4 Writing in a portable way: is it possible?<br>
+.5 Tips and tricks<br>
+</ul>  
+   
+<h3>7. IA-64 Architecture and Programming</h3>
+
+<ul>
+.1 Introduction to IA-64 Architecture<br>
+.2 Introduction to IA-64 Programming<br>
+.3 Memory reference<br>
+.4 Prediction and Control Flow<br>
+.5 Loops<br>
+.6 Floating point<br>
+.7 Mixing 32 and 64 bit code [explain chapter 6 in a 64 bit way]<br>
+</ul>
+	
+<h3>8. Fit it in a hand</h3> (building a pure assembly Linux distribution)
+
+<p>[ This chapter will include a lot of source code examples, and is intended
+  to be a tour on Linux IA-32 and IA-64 assembly programming ]
+
+<ul>
+.1 Description of distribution parts (kernel, libc, utils)<br>
+.2 Tutorial on creating small executables<br>
+.3 Rewriting usual utils in assembly<br>
+.4 Implementing libc in assembly (rather big chapter)<br>
+</ul>
+
+<h4>Appendix A - system call list</h4>
+<h4>Appendix B - ELF structure and memory layout</h4>
+<h4>Appendix C - tutorial on porting DOS code to Linux</h4>
+
+<h3>References</h3>
+
+</blockquote>
+</body></html>

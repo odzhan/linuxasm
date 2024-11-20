@@ -1,0 +1,201 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><title>Chapter 2. Do you need assembly?</title><meta name="generator" content="DocBook XSL Stylesheets V1.76.1"><meta name="keywords" content="assembly, assembler, asm, inline, 32-bit, IA-32, i386, x86, nasm, gas, as, as86, yasm, fasm, shasm, osimpa, OS, Linux, Unix, kernel, system, libc, glibc, system call, interrupt, small, fast, embedded, hardware, port, macroprocessor, metaprogramming, preprocessor"><link rel="home" href="Assembly-HOWTO.html" title="Linux Assembly HOWTO"><link rel="up" href="Assembly-HOWTO.html" title="Linux Assembly HOWTO"><link rel="prev" href="introduction.html" title="Chapter 1. Introduction"><link rel="next" href="howtonot.html" title="How to NOT use Assembly"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">Chapter 2. Do you need assembly?</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="introduction.html">Prev</a> </td><th width="60%" align="center"> </th><td width="20%" align="right"> <a accesskey="n" href="howtonot.html">Next</a></td></tr></table><hr></div><div class="chapter" title="Chapter 2. Do you need assembly?"><div class="titlepage"><div><div><h2 class="title"><a name="s-doyou"></a>Chapter 2. Do you need assembly?</h2></div></div></div><div class="toc"><p><b>Table of Contents</b></p><dl><dt><span class="section"><a href="doyouneed.html#idp80496">Pros and Cons</a></span></dt><dd><dl><dt><span class="section"><a href="doyouneed.html#idp83536">The advantages of Assembly</a></span></dt><dt><span class="section"><a href="doyouneed.html#idp94864">The disadvantages of Assembly</a></span></dt><dt><span class="section"><a href="doyouneed.html#idp110032">Assessment</a></span></dt></dl></dd><dt><span class="section"><a href="howtonot.html">How to NOT use Assembly</a></span></dt><dd><dl><dt><span class="section"><a href="howtonot.html#idp120080">General procedure to achieve efficient code</a></span></dt><dt><span class="section"><a href="howtonot.html#idp123568">Languages with optimizing compilers</a></span></dt><dt><span class="section"><a href="howtonot.html#idp125808">General procedure to speed your code up</a></span></dt><dt><span class="section"><a href="howtonot.html#idp134640">Inspecting compiler-generated code</a></span></dt></dl></dd><dt><span class="section"><a href="landa.html">Linux and assembly</a></span></dt></dl></div>
+
+
+
+<p>
+Well, I wouldn't want to interfere with what you're doing, but here is some
+advice from the hard-earned experience.
+</p>
+
+<div class="section" title="Pros and Cons"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="idp80496"></a>Pros and Cons</h2></div></div></div>
+
+
+<div class="section" title="The advantages of Assembly"><div class="titlepage"><div><div><h3 class="title"><a name="idp83536"></a>The advantages of Assembly</h3></div></div></div>
+
+<p>
+Assembly can express very low-level things:
+</p><div class="itemizedlist"><ul class="itemizedlist" type="disc"><li class="listitem">
+<p>
+you can access machine-dependent registers and I/O
+</p>
+</li><li class="listitem">
+<p>
+you can control the exact code behavior in critical sections that might
+otherwise involve deadlock between multiple software threads or hardware
+devices
+</p>
+</li><li class="listitem">
+<p>
+you can break the conventions of your usual compiler, which might allow some
+optimizations (like temporarily breaking rules about memory allocation,
+threading, calling conventions, etc)
+</p>
+</li><li class="listitem">
+<p>
+you can build interfaces between code fragments using incompatible conventions
+(e.g. produced by different compilers, or separated by a low-level interface)
+</p>
+</li><li class="listitem">
+<p>
+you can get access to unusual programming modes of your processor (e.g. 16 bit
+mode to interface startup, firmware, or legacy code on Intel PCs)
+</p>
+</li><li class="listitem">
+<p>
+you can produce reasonably fast code for tight loops to cope with a bad
+non-optimizing compiler (but then, there are free optimizing compilers
+available!)
+</p>
+</li><li class="listitem">
+<p>
+you can produce hand-optimized code perfectly tuned for your particular
+hardware setup, though not to someone else's
+</p>
+</li><li class="listitem">
+<p>
+you can write some code for your new language's optimizing compiler (that is
+something what very few ones will ever do, and even they not often)
+</p>
+</li><li class="listitem">
+<p>
+i.e. you can be in complete control of your code
+</p>
+</li></ul></div><p>
+</p>
+
+</div>
+
+<div class="section" title="The disadvantages of Assembly"><div class="titlepage"><div><div><h3 class="title"><a name="idp94864"></a>The disadvantages of Assembly</h3></div></div></div>
+
+<p>
+Assembly is a very low-level language (the lowest above hand-coding the binary
+instruction patterns). This means
+</p><div class="itemizedlist"><ul class="itemizedlist" type="disc"><li class="listitem">
+<p>
+it is long and tedious to write initially
+</p>
+</li><li class="listitem">
+<p>
+it is quite bug-prone
+</p>
+</li><li class="listitem">
+<p>
+your bugs can be very difficult to chase
+</p>
+</li><li class="listitem">
+<p>
+your code can be fairly difficult to understand and modify, i.e. to maintain
+</p>
+</li><li class="listitem">
+<p>
+the result is non-portable to other architectures, existing or upcoming
+</p>
+</li><li class="listitem">
+<p>
+your code will be optimized only for a certain implementation of a same
+architecture: for instance, among Intel-compatible platforms each CPU design
+and its variations (relative latency, through-output, and capacity, of
+processing units, caches, RAM, bus, disks, presence of FPU, MMX, 3DNOW, SIMD
+extensions, etc) implies potentially completely different optimization
+techniques. CPU designs already include: Intel 386, 486, Pentium, PPro, PII,
+PIII, PIV; Cyrix 5x86, 6x86, M2; AMD K5, K6 (K6-2, K6-III), K7 (Athlon, Duron).
+New designs keep popping up, so don't expect either this listing and your code
+to be up-to-date.
+</p>
+</li><li class="listitem">
+<p>
+you spend more time on a few details and can't focus on small and large
+algorithmic design, that are known to bring the largest part of the speed up
+(e.g. you might spend some time building very fast list/array manipulation
+primitives in assembly; only a hash table would have sped up your program much
+more; or, in another context, a binary tree; or some high-level structure
+distributed over a cluster of CPUs)
+</p>
+</li><li class="listitem">
+<p>
+a small change in algorithmic design might completely invalidate all your
+existing assembly code. So that either you're ready (and able) to rewrite it
+all, or you're tied to a particular algorithmic design
+</p>
+</li><li class="listitem">
+<p>
+On code that ain't too far from what's in standard benchmarks, commercial
+optimizing compilers outperform hand-coded assembly (well, that's less true on
+the x86 architecture than on RISC architectures, and perhaps less true for
+widely available/free compilers; anyway, for typical C code, GCC is fairly
+good);
+</p>
+</li><li class="listitem">
+<p>
+And in any case, as moderator John Levine says on
+<a class="ulink" href="news:comp.compilers" target="_top">comp.compilers</a>,
+</p>
+
+<div class="literallayout"><p><br>
+"compilers make it a lot easier to use complex data structures,<br>
+and compilers don't get bored halfway through<br>
+and generate reliably pretty good code."<br>
+</p></div>
+
+<p>
+They will also <span class="emphasis"><em>correctly</em></span> propagate code transformations
+throughout the whole (huge) program when optimizing code between procedures
+and module boundaries.
+</p>
+</li></ul></div><p>
+</p>
+</div>
+
+<div class="section" title="Assessment"><div class="titlepage"><div><div><h3 class="title"><a name="idp110032"></a>Assessment</h3></div></div></div>
+
+<p>
+All in all, you might find that though using assembly is sometimes needed, and
+might even be useful in a few cases where it is not, you'll want to:
+</p><div class="itemizedlist"><ul class="itemizedlist" type="disc"><li class="listitem">
+<p>
+minimize use of assembly code
+</p>
+</li><li class="listitem">
+<p>
+encapsulate this code in well-defined interfaces
+</p>
+</li><li class="listitem">
+<p>
+have your assembly code automatically generated from patterns expressed in a
+higher-level language than assembly (e.g. GCC inline assembly macros)
+</p>
+</li><li class="listitem">
+<p>
+have automatic tools translate these programs into assembly code
+</p>
+</li><li class="listitem">
+<p>
+have this code be optimized if possible
+</p>
+</li><li class="listitem">
+<p>
+All of the above, i.e. write (an extension to) an optimizing compiler back-end.
+</p>
+</li></ul></div><p>
+</p>
+
+<p>
+Even when assembly is needed (e.g. OS development), you'll find that not so
+much of it is required, and that the above principles retain.
+</p>
+
+<p>
+See the Linux kernel sources concerning this: as little assembly as needed,
+resulting in a fast, reliable, portable, maintainable OS. Even a successful
+game like DOOM was almost massively written in C, with a tiny part only being
+written in assembly for speed up.
+</p>
+
+</div>
+
+</div>
+
+
+
+
+</div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="introduction.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="howtonot.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">Chapter 1. Introduction </td><td width="20%" align="center"><a accesskey="h" href="Assembly-HOWTO.html">Home</a></td><td width="40%" align="right" valign="top"> How to NOT use Assembly</td></tr></table></div></body></html>

@@ -1,0 +1,668 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE article PUBLIC 
+                   "-//OASIS//DTD DocBook V5.0//EN"
+                   "file:///usr/share/xml/docbook/schema/dtd/5.0/docbook.dtd">
+
+<article>
+<?dbhtml filename="Assembly-Intro.html"?>
+<info><title>Introduction to UNIX assembly programming</title>
+
+<author>
+<personname>
+<anchor xml:id="lnoor"/>
+<firstname>Leo</firstname>
+<surname>Noordergraaf</surname>
+</personname>
+<affiliation>
+<orgname class="informal">
+<link xlink:href="http://asm.sourceforge.net/">Linux Assembly</link>
+</orgname>
+<address>
+<email>lnoor@users.sourceforge.net</email>
+</address>
+</affiliation>
+</author>
+
+<author>
+<personname>
+<anchor xml:id="konst"/>
+<firstname>Konstantin</firstname>
+<surname>Boldyshev</surname>
+</personname>
+<affiliation>
+<orgname class="informal">
+<link xlink:href="http://asm.sourceforge.net/">Linux Assembly</link>
+</orgname>
+<address>
+<email>konst@users.sourceforge.net</email>
+</address>
+</affiliation>
+</author>
+
+<releaseinfo>Version 0.9</releaseinfo>
+<pubdate role="Subversion">$Date: 2013-03-10 13:40:11 +0100 (Sun, 10 Mar 2013) $</pubdate>
+
+<copyright>
+<year>2013</year>
+<holder>Leo Noordergraaf</holder>
+</copyright>
+
+<copyright>
+<year>1999, 2000, 2006</year>
+<holder>Konstantin Boldyshev</holder>
+</copyright>
+
+<legalnotice>
+<para>
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU Free Documentation License, Version 1.1;
+with no Invariant Sections, with no Front-Cover Texts, and no Back-Cover texts.
+</para>
+</legalnotice>
+
+<abstract>
+<para>
+This document is intended to be a tutorial, showing how to write
+a simple assembly program in several UNIX operating systems
+on the IA-32 (i386) platform. Included material may or may not
+be applicable to other hardware and/or software platforms.
+</para>
+
+<para>
+This document explains program layout, system call convention,
+and the build process.
+</para>
+
+<para>
+It accompanies the
+<link xlink:href="http://asm.sourceforge.net/howto.html">Linux Assembly HOWTO</link>,
+which may also be of interest, though it is more Linux specific.
+</para>
+</abstract>
+</info>
+
+<sect1 xml:id="intro" xreflabel="Introduction">
+<?dbhtml filename="intro.html"?>
+<title>Introduction</title>
+
+<sect2 xml:id="s-legal"><title>Legal blurb</title>
+<para>
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU
+<link xlink:href="http://www.gnu.org/copyleft/fdl.html">
+Free Documentation License Version 1.1</link>;
+with no Invariant Sections, with no Front-Cover Texts, and no Back-Cover texts.
+</para>
+</sect2>
+
+<sect2><title>Obtaining this document</title>
+<para>
+The latest version of this document is available from
+<link xlink:href="http://asm.sourceforge.net/intro.html">http://asm.sourceforge.net/intro.html</link>
+If you are reading a few-months-old copy, please check the url above for a new version.
+</para>
+</sect2>
+
+<sect2><title>Tools you need</title>
+<para>
+You will need several tools to play with programs included in this tutorial.
+</para>
+
+<para>
+First of all you need the assembler (compiler).
+As a rule modern UNIX distributions include
+<command>as</command> (or <command>gas</command>),
+but all of the examples here use another assembler --
+<command>nasm</command> (Netwide Assembler).
+It comes with full source code, and you can download it from the
+<link xlink:href="http://sourceforge.net/projects/nasm">nasm page</link>,
+or install it from the ports (or package) system.
+Compile it, or try to find precompiled binary for your OS;
+note that several distributions (at least Linux ones)
+already have <command>nasm</command>, check first.
+</para>
+
+<para>
+Second, you need a linker -- <command>ld</command>,
+since assembler produces only object code.
+All distributions with the compilation tools installed
+will have <command>ld</command>.
+</para>
+
+<para>
+If you're going to dig in, you should also install include files for your OS,
+and if possible, kernel source.
+</para>
+
+<para>
+Now you should be ready to start, welcome.. 
+</para>
+</sect2>
+</sect1>
+
+<sect1 xml:id="hello" xreflabel="Hello, world!">
+<?dbhtml filename="hello.html"?>
+<title>Hello, world!</title>
+
+<para>
+Now we will write our program, the old classic "Hello, world"
+(<filename>hello.asm</filename>).
+You can download its source and binaries
+<link xlink:href="http://asm.sourceforge.net/intro/hello.tgz">here</link>
+But before you do, let me explain several basics.
+</para>
+
+<sect2><title>System calls</title>
+<para>
+Unless a program is just implementing some math algorithms in assembly,
+it will deal with such things as getting input, producing output,
+and exiting. For this, it will need to call on OS services.
+In fact, programming in assembly language is quite the same in different OSes,
+unless OS services are touched.
+</para>
+
+<para>
+There are two common ways of performing a system call in UNIX OS:
+through the C library (<application>libc</application>) wrapper, or directly.
+</para>
+
+<para>
+Using or not using <application>libc</application> in assembly programming
+is more a question of taste/belief than something practical.
+<application>Libc</application> wrappers are made to protect programs
+from possible system call convention changes,
+and to provide POSIX compatible interface if the kernel lacks it for some call.
+However, the UNIX kernel is usually more-or-less POSIX compliant --
+this means that the syntax of most <application>libc</application> "system calls"
+exactly matches the syntax of real kernel system calls (and vice versa).
+But the main drawback of throwing <application>libc</application> away
+is that one loses several functions that are not just syscall wrappers,
+like <function>printf()</function>, <function>malloc()</function> and similar.
+</para>
+
+<para>
+This tutorial will show how to use <emphasis>direct</emphasis> kernel calls,
+since this is the fastest way to call kernel service;
+our code is not linked to any library, does not use ELF interpreter,
+it communicates with kernel directly.
+</para>
+
+<para>
+Things that differ in different UNIX kernels
+are set of system calls and system call convention
+(however as they strive for POSIX compliance,
+there's a lot of common between them).
+</para>
+
+<note>
+<para>
+(Former) DOS programmers might be wondering,
+"What is a system call?"
+If you ever wrote a DOS assembly program
+(and most IA-32 assembly programmers did), you may remember DOS services
+<function>int 0x21</function>,
+<function>int 0x25</function>,
+<function>int 0x26</function> etc..
+These are analogous to the UNIX system call.
+However, the actual implementation is absolutely different,
+and system calls are not necessarily done via some interrupt.
+Also, quite often DOS programmers mix OS services with BIOS services
+like <function>int 0x10</function> or <function>int 0x16</function>
+and are very surprised when they fail
+to perform them in UNIX, since these are not OS services).
+</para>
+</note>
+</sect2>
+
+<sect2><title>Program layout</title>
+<para>
+As a rule, modern IA-32 UNIXes are 32bit (*grin*), run in protected mode,
+have a flat memory model, and use the ELF format for binaries.
+</para>
+
+<para>
+A program can be divided into sections:
+<literal>.text</literal> for your code (read-only),
+<literal>.data</literal> for your data (read-write),
+<literal>.bss</literal> for uninitialized data (read-write);
+there can actually be a few other standard sections,
+as well as some user-defined sections,
+but there's rare need to use them and they are out of our interest here.
+A program must have at least <literal>.text</literal> section.
+</para>
+
+<para>
+Ok, now we'll dive into OS specific details.
+</para>
+</sect2>
+
+<sect2><title>Linux</title>
+<para>
+System calls in Linux are done through int 0x80.
+(actually there's a kernel patch allowing system calls to be done
+via the <function>syscall</function> (<function>sysenter</function>)
+instruction on newer CPUs, but this thing is still experimental).
+</para>
+
+<para>
+Linux differs from the usual UNIX calling convention,
+and features a "fastcall" convention for system calls (it resembles DOS).
+The system function number is passed in <literal>eax</literal>,
+and arguments are passed through registers, not the stack.
+There can be up to six arguments in
+<literal>ebx</literal>,
+<literal>ecx</literal>,
+<literal>edx</literal>,
+<literal>esi</literal>,
+<literal>edi</literal>,
+<literal>ebp</literal> consequently.
+If there are more arguments, they are simply passed though the
+structure as first argument.
+The result is returned in <literal>eax</literal>,
+and the stack is not touched at all.
+</para>
+
+<para>
+System call function numbers are in <filename>sys/syscall.h</filename>,
+but actually in <filename>asm/unistd.h</filename>.
+Documentation on the actual system calls is in section 2 of the manual pages
+some documentation is in the 2nd section of manual
+(for example to find info on <function>write</function> system call,
+issue the command <command>man 2 write</command>).
+</para>
+
+<para>
+There have been several attempts to write
+an up-to-date documentation of the Linux system calls,
+examine URLs in the
+<xref linkend="ref"/> section below.
+</para>
+
+<para>
+So, our Linux program will look like:
+</para>
+
+<para>
+<programlisting>
+section     .text
+global      _start                              ;must be declared for linker (ld)
+
+_start:                                         ;tell linker entry point
+
+    mov     edx,len                             ;message length
+    mov     ecx,msg                             ;message to write
+    mov     ebx,1                               ;file descriptor (stdout)
+    mov     eax,4                               ;system call number (sys_write)
+    int     0x80                                ;call kernel
+
+    mov     eax,1                               ;system call number (sys_exit)
+    int     0x80                                ;call kernel
+
+section     .data
+
+msg     db  'Hello, world!',0xa                 ;our dear string
+len     equ $ - msg                             ;length of our dear string
+</programlisting>
+</para>
+
+<para>
+Kernel source references:
+<itemizedlist>
+<listitem>
+<para>
+<link xlink:href="file:///usr/src/linux/arch/i386/kernel/entry.S">
+<filename>arch/i386/kernel/entry.S</filename>
+</link>
+</para>
+</listitem>
+
+<listitem>
+<para>
+<link xlink:href="file:///usr/src/linux/include/asm-i386/unistd.h">
+<filename>include/asm-i386/unistd.h</filename>
+</link>
+</para>
+</listitem>
+
+<listitem>
+<para>
+<link xlink:href="file:///usr/src/linux/include/linux/sys.h">
+<filename>include/linux/sys.h</filename>
+</link>
+</para>
+</listitem>
+</itemizedlist>
+</para>
+</sect2>
+
+<sect2><title>FreeBSD</title>
+<note>
+<para>
+most of this section should apply to other BSD systems (OpenBSD, NetBSD) as well,
+however the source references may be different.
+</para>
+</note>
+
+<para>
+FreeBSD has the more "usual" calling convention,
+where the syscall number is in eax, and the parameters are on the stack
+(the first argument is pushed last).
+A system call should be done performed through a <emphasis>function call</emphasis>
+to a function containing
+<function>int 0x80</function> and <function>ret</function>,
+not just <function>int 0x80</function> itself
+(kernel expects to find extra 4 bytes on the stack
+before <function>int 0x80</function> is issued).
+The caller must clean up the stack after the call is complete.
+The result is returned as usual in <literal>eax</literal>.
+</para>
+
+<para>
+There's an alternate way of using <function>call 7:0</function> gate
+instead of <function>int 0x80</function>.
+The end-result is the same, but the <function>call 7:0</function>
+method will increase the program size
+since you will also need to do an extra <function>push eax</function> before,
+and these two instructions occupy more bytes.
+</para>
+
+<para>
+System call function numbers are listed in <filename>sys/syscall.h</filename>,
+and the documentation on the system calls is in section 2 of the man pages.
+</para>
+
+<para>
+Ok, I think the source will explain this better:
+</para>
+
+<para>
+<programlisting>
+section     .text
+global      _start                              ;must be declared for linker (ld)
+
+_syscall:
+    int     0x80                                ;system call
+	  ret
+
+_start:                                         ;tell linker entry point
+
+	  push    dword len                           ;message length
+	  push    dword msg                           ;message to write
+	  push    dword 1                             ;file descriptor (stdout)
+	  mov     eax,0x4                             ;system call number (sys_write)
+	  call    _syscall                            ;call kernel
+
+		;the alternate way to call kernel:
+		;push   eax
+    ;call   7:0
+
+	  add     esp,12                              ;clean stack (3 arguments * 4)
+
+	  push    dword 0                             ;exit code
+	  mov     eax,0x1                             ;system call number (sys_exit)
+	  call    _syscall                            ;call kernel
+
+		;we do not return from sys_exit,
+		;there's no need to clean stack
+section     .data
+
+msg     db  "Hello, world!",0xa                 ;our dear string
+len     equ $ - msg                             ;length of our dear string
+</programlisting>
+</para>
+
+<para>
+Kernel source references:
+<itemizedlist>
+<listitem><para>
+<link xlink:href="file:///usr/src/sys/i386/i386/exception.s">
+<filename>i386/i386/exception.s</filename>
+</link>
+</para>
+</listitem>
+
+<listitem>
+<para>
+<link xlink:href="file:///usr/src/sys/i386/i386/trap.c">
+<filename>i386/i386/trap.c</filename>
+</link>
+</para>
+</listitem>
+
+<listitem>
+<para>
+<link xlink:href="file:///usr/src/sys/sys/syscall.h">
+<filename>sys/syscall.h</filename>
+</link>
+</para></listitem>
+</itemizedlist>
+</para>
+</sect2>
+
+<sect2><title>BeOS</title>
+<note>
+<para>
+if you are building <application>nasm</application> version 0.98
+from the source on BeOS,
+you need to insert <literal>#include "nasm.h"</literal>
+into <filename>float.h</filename>,
+and <literal>#include &lt;stdio.h&gt;</literal>
+into <filename>nasm.h</filename>.
+</para>
+</note>
+
+<para>
+The BeOS kernel also uses the &quot;usual&quot; UNIX calling convention.
+The difference from the FreeBSD example is that you call
+<function>int 0x25</function>.
+</para>
+
+<para>
+For information where to find system call function numbers and other
+interesting details, examine
+<link linkend="ref">asmutils</link>,
+especially the <filename>os_beos.inc</filename> file.
+</para>
+
+<para>
+<programlisting>
+section     .text
+global      _start                              ;must be declared for linker (ld)
+
+_syscall:                                       ;system call
+    int     0x25
+	  ret
+
+_start:                                         ;tell linker entry point
+
+	  push    dword len                           ;message length
+	  push    dword msg                           ;message to write
+  	push    dword 1                             ;file descriptor (stdout)
+	  mov     eax,0x3                             ;system call number (sys_write)
+	  call    _syscall                            ;call kernel
+	  add     esp,12                              ;clean stack (3 * 4)
+
+	  push    dword 0                             ;exit code
+	  mov     eax,0x3f                            ;system call number (sys_exit)
+	  call    _syscall                            ;call kernel
+				                                        ;no need to clean stack
+section     .data
+
+msg     db  "Hello, world!",0xa                 ;our dear string
+len     equ $ - msg                             ;length of our dear string
+</programlisting>
+</para>
+</sect2>
+
+<sect2><title>Building an executable</title>
+<para>
+Building an executable is the usual two-step process of compiling and then linking.
+To make an executable out of our <filename>hello.asm</filename> we must do the following:
+</para>
+
+<para>
+<screen>
+$ nasm -f elf hello.asm                         # this will produce hello.o ELF object file
+$ ld -s -o hello hello.o                        # this will produce hello executable
+</screen>
+</para>
+
+<note>
+<para>
+OpenBSD and NetBSD users should issue the following sequence instead
+(because of <literal>a.out</literal> executable format):
+</para>
+
+<para>
+<screen>
+$ nasm -f aoutb hello.asm                       # this will produce hello.o a.out object file
+$ ld -e _start -o hello hello.o                 # this will produce hello executable
+</screen>
+</para>
+</note>
+
+<para>
+That's it. Simple.
+Now you can launch the hello program by entering <command>./hello</command>.
+Look at the binary size -- surprised?
+</para>
+</sect2>
+</sect1>
+
+<sect1 xml:id="ref" xreflabel="References">
+<?dbhtml filename="references.html"?>
+<title>References</title>
+
+<para>
+I hope you enjoyed this journey. If you get interested in assembly
+programming for UNIX, I strongly encourage you to visit
+<link xlink:href="http://asm.sourceforge.net">Linux Assembly</link>
+site for more information, and download the
+<link xlink:href="http://asm.sourceforge.net/asmutils.html">asmutils</link>
+ package, it contains a lot of sample code.
+For a comprehensive overview of Linux/UNIX assembly programming refer to the 
+<link xlink:href="http://asm.sourceforge.net/howto.html">Linux Assembly HOWTO</link>.
+</para>
+
+<para>
+Thank you for your interest!
+</para>
+</sect1>
+
+<appendix xml:id="a-history">
+<?dbhtml filename="history.html"?>
+<title>History</title>
+
+<para>
+<revhistory>
+<revision>
+<revnumber>0.9a</revnumber>
+<date>10 Mar 2013</date>
+<authorinitials>lnoor</authorinitials>
+<revremark>Updated links, converted to DocBook XML</revremark>
+</revision>
+
+<revision>
+<revnumber>0.9</revnumber>
+<date>11 Feb 2006</date>
+<authorinitials>konst</authorinitials>
+<revremark>Linux example correction for 2.6 kernels, updated NASM URL</revremark>
+</revision>
+
+<revision>
+<revnumber>0.8</revnumber>
+<date>10 Nov 2000</date>
+<authorinitials>konst</authorinitials>
+<revremark>rewritten using DocBook DTD, minor corrections</revremark>
+</revision>
+
+<revision>
+<revnumber>0.7</revnumber>
+<date>23 Aug 2000</date>
+<authorinitials>konst</authorinitials>
+<revremark></revremark>
+</revision>
+
+<revision>
+<revnumber>0.6</revnumber>
+<date>11 Jul 2000</date>
+<authorinitials>konst</authorinitials>
+<revremark></revremark>
+</revision>
+
+<revision>
+<revnumber>0.5</revnumber>
+<date>01 Jun 2000</date>
+<authorinitials>konst</authorinitials>
+<revremark>merged Daemonnews corrections</revremark>
+</revision>
+
+<revision>
+<revnumber>0.3</revnumber>
+<date>09 Apr 2000</date>
+<authorinitials>konst</authorinitials>
+<revremark>rewritten using linuxdoc dtd</revremark>
+</revision>
+
+<revision>
+<revnumber>0.2</revnumber>
+<date>26 Jan 2000</date>
+<authorinitials>konst</authorinitials>
+<revremark>rearrangement</revremark>
+</revision>
+
+<revision>
+<revnumber>0.1</revnumber>
+<date>xx Jun 1999</date>
+<authorinitials>konst</authorinitials>
+<revremark>first version</revremark>
+</revision>
+</revhistory>
+</para>
+</appendix>
+
+<appendix xml:id="a-ack">
+<?dbhtml filename="acknowledgements.html"?>
+<title>Acknowledgements</title>
+
+<para>
+I would like to thank:
+<itemizedlist>
+<listitem>
+<para>
+<link xlink:href="http://daemonnews.org">DaemonNews</link>
+ people for proofreading and corrections they kindly submitted to me
+</para>
+</listitem>
+
+<listitem>
+<para>
+<link xlink:href="mailto:eugene@securityarchitects.com">Eugene Tsyrklevich</link>
+ for note on NetBSD compile process
+</para>
+</listitem>
+</itemizedlist>
+</para>
+</appendix>
+
+<appendix xml:id="a-endor">
+<?dbhtml filename="endorsements.html"?>
+<title>Endorsements</title>
+
+<para>
+This version of the document is endorsed by 
+<link linkend="lnoor">Leo Noordergraaf</link>.
+</para>
+
+<para>
+Modifications (including translations) must remove this appendix
+according to the <link linkend="s-legal">license agreement</link>.
+</para>
+
+<para>
+<literal>
+$Id: Assembly-Intro.xml 14 2013-03-10 12:40:11Z lnoor $
+</literal>
+</para>
+</appendix>
+</article>

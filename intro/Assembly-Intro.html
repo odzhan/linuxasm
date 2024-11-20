@@ -1,0 +1,111 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><title>Introduction to UNIX assembly programming</title><meta name="generator" content="DocBook XSL Stylesheets V1.76.1"><meta name="description" content="This document is intended to be a tutorial, showing how to write a simple assembly program in several UNIX operating systems on the IA-32 (i386) platform. Included material may or may not be applicable to other hardware and/or software platforms. This document explains program layout, system call convention, and the build process. It accompanies the Linux Assembly HOWTO, which may also be of interest, though it is more Linux specific."><link rel="home" href="Assembly-Intro.html" title="Introduction to UNIX assembly programming"><link rel="next" href="hello.html" title="Hello, world!"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">Introduction to UNIX assembly programming</th></tr><tr><td width="20%" align="left"> </td><th width="60%" align="center"> </th><td width="20%" align="right"> <a accesskey="n" href="hello.html">Next</a></td></tr></table><hr></div><div class="article" title="Introduction to UNIX assembly programming"><div class="titlepage"><div><div><h2 class="title"><a name="idp192"></a>Introduction to UNIX assembly programming</h2></div><div><div class="author"><h3 class="author"><span class="firstname">Leo</span> <span class="surname">Noordergraaf</span></h3><div class="affiliation">
+<span class="orgname">
+<a class="ulink" href="http://asm.sourceforge.net/" target="_top">Linux Assembly</a>
+<br></span>
+<div class="address"><p><br>
+<code class="email">&lt;<a class="email" href="mailto:lnoor@users.sourceforge.net">lnoor@users.sourceforge.net</a>&gt;</code><br>
+</p></div>
+</div></div></div><div><div class="author"><h3 class="author"><span class="firstname">Konstantin</span> <span class="surname">Boldyshev</span></h3><div class="affiliation">
+<span class="orgname">
+<a class="ulink" href="http://asm.sourceforge.net/" target="_top">Linux Assembly</a>
+<br></span>
+<div class="address"><p><br>
+<code class="email">&lt;<a class="email" href="mailto:konst@users.sourceforge.net">konst@users.sourceforge.net</a>&gt;</code><br>
+</p></div>
+</div></div></div><div><p class="releaseinfo">Version 0.9</p></div><div><p class="copyright">Copyright © 2013 Leo Noordergraaf</p></div><div><p class="copyright">Copyright © 1999, 2000, 2006 Konstantin Boldyshev</p></div><div><div class="legalnotice" title="Legal Notice"><a name="idp33712"></a>
+<p>
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU Free Documentation License, Version 1.1;
+with no Invariant Sections, with no Front-Cover Texts, and no Back-Cover texts.
+</p>
+</div></div><div><p class="pubdate">$Date: 2013-03-10 13:40:11 +0100 (Sun, 10 Mar 2013) $</p></div><div><div class="abstract" title="Abstract"><p class="title"><b>Abstract</b></p>
+<p>
+This document is intended to be a tutorial, showing how to write
+a simple assembly program in several UNIX operating systems
+on the IA-32 (i386) platform. Included material may or may not
+be applicable to other hardware and/or software platforms.
+</p>
+
+<p>
+This document explains program layout, system call convention,
+and the build process.
+</p>
+
+<p>
+It accompanies the
+<a class="ulink" href="http://asm.sourceforge.net/howto.html" target="_top">Linux Assembly HOWTO</a>,
+which may also be of interest, though it is more Linux specific.
+</p>
+</div></div></div><hr></div><div class="toc"><p><b>Table of Contents</b></p><dl><dt><span class="sect1"><a href="Assembly-Intro.html#intro">Introduction</a></span></dt><dd><dl><dt><span class="sect2"><a href="Assembly-Intro.html#s-legal">Legal blurb</a></span></dt><dt><span class="sect2"><a href="Assembly-Intro.html#idp40336">Obtaining this document</a></span></dt><dt><span class="sect2"><a href="Assembly-Intro.html#idp42096">Tools you need</a></span></dt></dl></dd><dt><span class="sect1"><a href="hello.html">Hello, world!</a></span></dt><dd><dl><dt><span class="sect2"><a href="hello.html#idp51184">System calls</a></span></dt><dt><span class="sect2"><a href="hello.html#idp22960">Program layout</a></span></dt><dt><span class="sect2"><a href="hello.html#idp62000">Linux</a></span></dt><dt><span class="sect2"><a href="hello.html#idp79120">FreeBSD</a></span></dt><dt><span class="sect2"><a href="hello.html#idp94768">BeOS</a></span></dt><dt><span class="sect2"><a href="hello.html#idp102432">Building an executable</a></span></dt></dl></dd><dt><span class="sect1"><a href="references.html">References</a></span></dt><dt><span class="appendix"><a href="history.html">A. History</a></span></dt><dt><span class="appendix"><a href="acknowledgements.html">B. Acknowledgements</a></span></dt><dt><span class="appendix"><a href="endorsements.html">C. Endorsements</a></span></dt></dl></div>
+
+
+
+<div class="sect1" title="Introduction"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="intro"></a>Introduction</h2></div></div></div>
+
+
+
+<div class="sect2" title="Legal blurb"><div class="titlepage"><div><div><h3 class="title"><a name="s-legal"></a>Legal blurb</h3></div></div></div>
+<p>
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU
+<a class="ulink" href="http://www.gnu.org/copyleft/fdl.html" target="_top">
+Free Documentation License Version 1.1</a>;
+with no Invariant Sections, with no Front-Cover Texts, and no Back-Cover texts.
+</p>
+</div>
+
+<div class="sect2" title="Obtaining this document"><div class="titlepage"><div><div><h3 class="title"><a name="idp40336"></a>Obtaining this document</h3></div></div></div>
+<p>
+The latest version of this document is available from
+<a class="ulink" href="http://asm.sourceforge.net/intro.html" target="_top">http://asm.sourceforge.net/intro.html</a>
+If you are reading a few-months-old copy, please check the url above for a new version.
+</p>
+</div>
+
+<div class="sect2" title="Tools you need"><div class="titlepage"><div><div><h3 class="title"><a name="idp42096"></a>Tools you need</h3></div></div></div>
+<p>
+You will need several tools to play with programs included in this tutorial.
+</p>
+
+<p>
+First of all you need the assembler (compiler).
+As a rule modern UNIX distributions include
+<span class="command"><strong>as</strong></span> (or <span class="command"><strong>gas</strong></span>),
+but all of the examples here use another assembler --
+<span class="command"><strong>nasm</strong></span> (Netwide Assembler).
+It comes with full source code, and you can download it from the
+<a class="ulink" href="http://sourceforge.net/projects/nasm" target="_top">nasm page</a>,
+or install it from the ports (or package) system.
+Compile it, or try to find precompiled binary for your OS;
+note that several distributions (at least Linux ones)
+already have <span class="command"><strong>nasm</strong></span>, check first.
+</p>
+
+<p>
+Second, you need a linker -- <span class="command"><strong>ld</strong></span>,
+since assembler produces only object code.
+All distributions with the compilation tools installed
+will have <span class="command"><strong>ld</strong></span>.
+</p>
+
+<p>
+If you're going to dig in, you should also install include files for your OS,
+and if possible, kernel source.
+</p>
+
+<p>
+Now you should be ready to start, welcome.. 
+</p>
+</div>
+</div>
+
+
+
+
+
+
+
+
+
+
+</div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="hello.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"> </td><td width="40%" align="right" valign="top"> Hello, world!</td></tr></table></div></body></html>

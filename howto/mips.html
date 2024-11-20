@@ -1,0 +1,56 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><title>MIPS Example</title><meta name="generator" content="DocBook XSL Stylesheets V1.76.1"><meta name="keywords" content="assembly, assembler, asm, inline, 32-bit, IA-32, i386, x86, nasm, gas, as, as86, yasm, fasm, shasm, osimpa, OS, Linux, Unix, kernel, system, libc, glibc, system call, interrupt, small, fast, embedded, hardware, port, macroprocessor, metaprogramming, preprocessor"><link rel="home" href="Assembly-HOWTO.html" title="Linux Assembly HOWTO"><link rel="up" href="quickstart.html" title="Chapter 6. Quick start"><link rel="prev" href="build.html" title="Building an executable"><link rel="next" href="resources.html" title="Chapter 7. Resources"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">MIPS Example</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="build.html">Prev</a> </td><th width="60%" align="center">Chapter 6. Quick start</th><td width="20%" align="right"> <a accesskey="n" href="resources.html">Next</a></td></tr></table><hr></div><div class="section" title="MIPS Example"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="idp496192"></a>MIPS Example</h2></div></div></div>
+
+
+
+<p>
+As a demonstration of a fact that there's a universe other than x86, here comes
+an example program for MIPS by Spencer Parkin.
+</p>
+
+<p>
+</p><pre class="programlisting">
+
+# hello.S	by Spencer T. Parkin
+
+# This is my first MIPS-RISC assembly program!
+# To compile this program type:
+# &gt; gcc -o hello hello.S -non_shared
+
+# This program compiles without errors or warnings
+# on a PlayStation2 MIPS R5900 (EE Core).
+# EE stands for Emotion Engine...lame!
+
+# The -non_shared option tells gcc that we`re
+# not interrested in compiling relocatable code.
+# If we were, we would need to follow the PIC-
+# ABI calling conventions and other protocols.
+
+#include &lt;asm/regdef.h&gt;		// ...for human readable register names
+#include &lt;asm/unistd.h&gt;		// ...for system serivices			
+
+		.rdata					# begin read-only data segment
+		.align		2			# because of the way memory is built
+hello:		.asciz		"Hello, world!\n"	# a null terminated string
+		.align		4			# because of the way memory is built
+length:		.word		. - hello		# length = IC - (hello-addr)
+		.text					# begin code segment
+		.globl		main			# for gcc/ld linking
+		.ent		main			# for gdb debugging info.
+main:		# We must specify -non_shared to gcc or we`ll need these 3 lines that fallow.
+#		.set		noreorder		# disable instruction reordering
+#		.cpload		t9			# PIC ABI crap (function prologue)
+#		.set		reorder			# re-enable instruction reordering
+		move		a0,$0			# load stdout fd
+		la		a1,hello		# load string address
+		lw		a2,length		# load string length
+		li		v0,__NR_write		# specify system write service
+		syscall					# call the kernel (write string)
+		li		v0,0			# load return code
+		j		ra			# return to caller
+		.end		main			# for dgb debugging info.
+
+# That`s all folks!
+
+</pre><p>
+</p>
+</div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="build.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="quickstart.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="resources.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">Building an executable </td><td width="20%" align="center"><a accesskey="h" href="Assembly-HOWTO.html">Home</a></td><td width="40%" align="right" valign="top"> Chapter 7. Resources</td></tr></table></div></body></html>
